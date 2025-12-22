@@ -21,6 +21,7 @@ const ProjectDetails = ({
         >
           <img src="assets/close.svg" className="w-6 h-6" />
         </button>
+        
         <img src={image} alt={title} className="w-full rounded-t-2xl" />
         <div className="p-5">
           <h5 className="mb-2 text-2xl font-bold text-white">{title}</h5>
