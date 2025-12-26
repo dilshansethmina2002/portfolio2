@@ -7,7 +7,7 @@ import { Frameworks } from "../components/FrameWorks";
 const About = () => {
   const grid2Container = useRef();
   return (
-    <section className="c-space section-spacing" id="about">
+    <section  className="c-space section-spacing" id="about">
       <h2 className="text-heading">About Me</h2>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-6 md:auto-rows-[18rem] mt-12">
         {/* Grid 1 */}
@@ -24,8 +24,10 @@ const About = () => {
           </div>
           <div className="absolute inset-x-0 pointer-evets-none -bottom-4 h-1/2 sm:h-1/3 bg-gradient-to-t from-indigo" />
         </div>
+       
+       
         {/* Grid 2 */}
-        <div className="grid-default-color grid-2">
+         <div className="grid-default-color grid-2">
           <div
             ref={grid2Container}
             className="flex items-center justify-center w-full h-full"
@@ -35,7 +37,7 @@ const About = () => {
             </p>
             <Card
               style={{ rotate: "75deg", top: "30%", left: "20%" }}
-              text="GRASP"
+              text="UI/UX"
               containerRef={grid2Container}
             />
             <Card
@@ -65,7 +67,7 @@ const About = () => {
             />
             <Card
               style={{ rotate: "-45deg", top: "70%", left: "25%" }}
-              image="assets/logos/dotnet-pink.png"
+              image="assets/logos/react.svg"
               containerRef={grid2Container}
             />
             <Card
@@ -75,34 +77,40 @@ const About = () => {
             />
           </div>
         </div>
+
+
+
         {/* Grid 3 */}
         <div className="grid-black-color grid-3">
           <div className="z-10 w-[50%]">
             <p className="headtext">Time Zone</p>
             <p className="subtext">
-              I'm based in Mars, and open to remote work worldwide
+              Please allow 20 minutes for my code reviews to reach Earth.
             </p>
           </div>
           <figure className="absolute left-[30%] top-[10%]">
             <Globe />
           </figure>
         </div>
+        
+        
         {/* Grid 4 */}
         <div className="grid-special-color grid-4">
           <div className="flex flex-col items-center justify-center gap-4 size-full">
             <p className="text-center headtext">
-              Do you want to start a project together?
+              Have you ever thought about us working together?
             </p>
             <CopyEmailButton />
           </div>
         </div>
+
+
         {/* Grid 5 */}
         <div className="grid-default-color grid-5">
           <div className="z-10 w-[50%]">
-            <p className="headText">Teck Stack</p>
+            <p className="headText">Tech Stack</p>
             <p className="subtext">
-              I specialize in a variety of languages, frameworks, and tools taht
-              allow me to build robust and scalable applications
+              Leveraging Java, MongoDB, and React to develop scalable web solutions from my remote base on Mars. I focus on technical excellence and performance, ensuring that every line of code is as stable as a Martian colony’s life support.
             </p>
           </div>
           <div className="absolute inset-y-0 md:inset-y-9 w-full h-full start-[50%] md:scale-125">

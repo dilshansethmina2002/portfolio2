@@ -3,19 +3,23 @@ import Navbar from "./sections/Navbar";
 import Hero from "./sections/Hero";
 import About from "./sections/About";
 import Projects from "./sections/Projects";
-import Experiences from "./sections/Experiences";
+import Education from "./sections/Education";
 import Testimonial from "./sections/Testimonial";
 import Contact from "./sections/Contact";
 import Footer from './sections/Footer';
+import SplashCursor from "./components/SplashCursor";
+
+
 
 const App = () => {
   return (
     <div className="container mx-auto">
-      <Navbar className="relative z-30" />
-      <Hero className="absolute z-10" />
+      {/* <SplashCursor /> */}
+      <Navbar />
+      <Hero />
       <About />
       <Projects />
-      <Experiences />
+      <Education />
       <Testimonial />
       <Contact />
       <Footer/>

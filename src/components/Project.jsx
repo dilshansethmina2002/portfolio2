@@ -26,13 +26,18 @@ const Project = ({
             ))}
           </div>
         </div>
+
         <button
           onClick={() => setIsHidden(true)}
-          className="flex items-center gap-1 cursor-pointer hover-animation"
+          className="group flex items-center gap-2 cursor-pointer bg-slate-900 text-cyan-400 border border-cyan-900/50 px-5 py-2 rounded-full font-semibold uppercase tracking-wider transition-all hover:bg-slate-800 hover:text-cyan-300 hover:border-cyan-500 shadow-[0_0_10px_-3px_rgba(6,182,212,0.5)] hover:shadow-[0_0_15px_-1px_rgba(6,182,212,0.8)]"
         >
           Read More
-          <img src="assets/arrow-right.svg" className="w-5" />
+          <img
+            src="assets/arrow-right.svg"
+            className="w-5 transition-transform duration-300 group-hover:translate-x-2"
+          />
         </button>
+        
       </div>
       <div className="bg-gradient-to-r from-transparent via-neutral-700 to-transparent h-[1px] w-full" />
       {isHidden && (

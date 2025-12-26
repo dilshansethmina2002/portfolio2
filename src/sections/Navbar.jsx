@@ -1,29 +1,34 @@
 import { useState } from "react";
 import { motion } from "motion/react";
+import { div } from "motion/react-client";
 function Navigation() {
   return (
-    <ul className="nav-ul">
-      <li className="nav-li">
-        <a className="nav-link" href="#home">
-          Home
+    <div className="relative z-30">
+      <ul className="nav-ul">
+        <li className="nav-li">
+          <div className="relative z-120">
+            <a className="nav-link" href="#home">
+              Home
         </a>
-      </li>
-      <li className="nav-li">
-        <a className="nav-link" href="#about">
-          About
-        </a>
-      </li>
-      <li className="nav-li">
-        <a className="nav-link" href="#work">
-          Work
-        </a>
-      </li>
-      <li className="nav-li">
-        <a className="nav-link" href="#contact">
-          Contact
-        </a>
-      </li>
-    </ul>
+          </div>
+        </li>
+        <li className="nav-li">
+          <a className="nav-link" href="#about">
+            About
+          </a>
+        </li>
+        <li className="nav-li">
+          <a className="nav-link" href="#work">
+            Work
+          </a>
+        </li>
+        <li className="nav-li">
+          <a className="nav-link" href="#contact">
+            Contact
+          </a>
+        </li>
+      </ul>
+    </div>
   );
 }
 const Navbar = () => {

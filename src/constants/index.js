@@ -1,33 +1,33 @@
 export const myProjects = [
   {
     id: 1,
-    title: "E-commerce Platform",
+    title: "Smart Postal Delivery Management System",
     description:
-      "Facilitates purchases from international websites like Amazon and eBay, allowing customers to shop from these sites and have products delivered domestically.",
+      "Smart Postal Delivery Management System Modernizes parcel handling operations by digitizing manual processes, enabling real-time tracking and secure delivery management for efficient logistics.",
     subDescription: [
-      "Built a scalable application with ASP.NET Core MVC, integrating global platforms like Amazon for domestic delivery.",
-      "Implemented secure authentication and database management using ASP.NET Core Identity and Entity Framework Core.",
-      "Designed a responsive frontend with Tailwind CSS, enhancing user experience.",
-      "Added payment systems, localization, and product filtering for functionality improvements.",
+      "Built a scalable web solution using the MERN stack (MongoDB, Express.js, React, Node.js) to centralize postal operations.",
+      "Implemented secure role-based access control and real-time package tracking mechanisms using unique QR/Barcode generation",
+      "Designed a responsive, user-friendly frontend with React.js and Tailwind CSS to ensure seamless accessibility across devices.",
+      "Added automated email notifications and analytical reporting tools to enhance transparency and operational oversight."
     ],
-    href: "",
+    href: "https://github.com/malindugimsara/smart-postal-managment-system",
     logo: "",
-    image: "/assets/projects/accessories.jpg",
+    image: "/assets/projects/SPDMS.png",
     tags: [
       {
         id: 1,
-        name: "C#",
-        path: "/assets/logos/csharp.svg",
+        name: "React.js",
+        path: "/assets/logos/react.svg",
       },
       {
         id: 2,
-        name: ".Net",
-        path: "/assets/logos/dotnet.svg",
+        name: "Node.js",
+        path: "/assets/logos/Node.js.svg",
       },
       {
         id: 3,
-        name: "Ef Core",
-        path: "/assets/logos/efcore.png",
+        name: "MongoDB",
+        path: "/assets/logos/MongoDB.svg",
       },
       {
         id: 4,
@@ -38,23 +38,23 @@ export const myProjects = [
   },
   {
     id: 2,
-    title: "Authentication & Authorization System",
+    title: "Lost & Found Web Application",
     description:
-      "A secure authentication and authorization system using Auth0 for seamless user management.",
+      "Lost & Found Web Application Connects community members to facilitate the recovery of lost items through a centralized digital reporting and search platform.",
     subDescription: [
-      "Integrated Auth0 for authentication, supporting OAuth, JWT, and multi-factor authentication.",
-      "Implemented role-based access control (RBAC) for fine-grained user permissions.",
-      "Developed a React-based frontend with Tailwind CSS for a sleek user experience.",
-      "Connected to a secure SQLite database for user data storage.",
+      "Developing a scalable full-stack application using the MERN stack (MongoDB, Express, React, Node) and Supabase for secure authentication and hosting.",
+      "Designed a mobile-responsive user interface using Material UI and Bootstrap to ensure seamless item reporting across all devices.",
+      "Implementing advanced smart filtering and keyword-based search algorithms to optimize the matching process for lost and found items.",
+      "Integrating an admin dashboard and moderation tools to maintain platform safety and streamline community management.",
     ],
-    href: "",
+    href: "https://github.com/dilshansethmina2002/Lost-and-find-item",
     logo: "",
-    image: "/assets/projects/auth-system.jpg",
+    image: "/assets/projects/LostAndFound.png",
     tags: [
       {
         id: 1,
-        name: "Auth0",
-        path: "/assets/logos/auth0.svg",
+        name: "Material UI",
+        path: "/assets/logos/MaterialUI.svg",
       },
       {
         id: 2,
@@ -63,72 +63,71 @@ export const myProjects = [
       },
       {
         id: 3,
-        name: "SQLite",
-        path: "/assets/logos/sqlite.svg",
+        name: "Node.js",
+        path: "/assets/logos/Node.js.svg",
       },
       {
         id: 4,
-        name: "TailwindCSS",
-        path: "/assets/logos/tailwindcss.svg",
+        name: "MongoDB",
+        path: "/assets/logos/MongoDB.svg",
       },
     ],
   },
   {
     id: 3,
-    title: "Blazor Web App",
+    title: "Travel Website",
     description:
-      "A modern, interactive web application built with Blazor WebAssembly and .NET Core.",
+      "Responsive Travel Website Showcases tourist destinations through a visually immersive and fully responsive platform, delivering a seamless browsing experience across all devices.",
     subDescription: [
-      "Developed a fully interactive Single Page Application (SPA) using Blazor WebAssembly.",
-      "Implemented API interactions using .NET Core for a robust backend.",
-      "Designed responsive UI components with Tailwind CSS for an enhanced UX.",
-      "Integrated SQLite for efficient client-side database storage.",
+      "Developed a dynamic front-end interface using HTML, CSS, JavaScript, and Bootstrap to ensure perfect rendering on mobile and desktop screens.",
+      "Designed an interactive user experience (UX) with smooth navigation and engaging visual layouts to effectively highlight travel locations.",
+      "Implemented web optimization best practices to ensure fast load times and high performance for users with varying internet speeds.",
     ],
-    href: "",
+    href: "https://github.com/dilshansethmina2002/Travel_website",
     logo: "",
-    image: "/assets/projects/blazor-app.jpg",
+    image: "/assets/projects/Travel.png",
     tags: [
       {
         id: 1,
-        name: "Blazor",
-        path: "/assets/logos/blazor.svg",
+        name: "HTML5",
+        path: "/assets/logos/html5.svg",
       },
       {
         id: 2,
-        name: ".NET Core",
-        path: "/assets/logos/dotnetcore.svg",
+        name: "JavaScript",
+        path: "/assets/logos/javascript.svg",
       },
       {
         id: 3,
-        name: "SQLite",
-        path: "/assets/logos/sqlite.svg",
+        name: "Bootstrap",
+        path: "/assets/logos/Bootstrap.svg",
       },
       {
         id: 4,
-        name: "TailwindCSS",
-        path: "/assets/logos/tailwindcss.svg",
+        name: "CSS",
+        path: "/assets/logos/css3.svg",
       },
     ],
   },
   {
     id: 4,
-    title: "C++ Game Engine",
+    title: "IoT & Automation Project",
     description:
-      "A lightweight C++ game engine designed for 2D and 3D game development.",
+      "IoT-Based Product Quality Checking System Automates the quality assurance process in manufacturing lines by detecting, sorting, and tracking products based on color and physical dimensions.",
     subDescription: [
-      "Built a powerful rendering engine using OpenGL and C++.",
-      "Developed a physics engine with collision detection and particle effects.",
-      "Implemented a scripting system for easy game customization.",
-      "Optimized performance with multi-threading and efficient memory management.",
+      "Engineered a fully automated robotic arm system using Arduino Uno and servo motors to sort products with high precision.",
+      "Integrated advanced sensor arrays (Color & Ultrasonic) to detect product defects and verify dimensional standards in real-time.",
+      "Developed a companion C# desktop application to visualize production data, track defect rates, and manage inventory logs via database integration.",
+      "Optimized workflow efficiency by minimizing manual errors through automated defect isolation and binning.",
     ],
-    href: "",
+    href: "https://www.linkedin.com/posts/sethminakol_iotproject-smartfactory-arduinouno-activity-7323964061270867968-BWcb?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFEhnBABeVbLh2ABKgqTGwjWydChbBm3i_U",
     logo: "",
-    image: "/assets/projects/game-engine.jpg",
+    image: "/assets/projects/IOT.png",
     tags: [
       {
         id: 1,
-        name: "C++",
-        path: "/assets/logos/cplusplus.svg",
+        name: "Arduino Uno",
+        path: "/assets/logos/Arduino.svg",
       },
       {
         id: 2,
@@ -137,8 +136,8 @@ export const myProjects = [
       },
       {
         id: 3,
-        name: "Git",
-        path: "/assets/logos/git.svg",
+        name: "Ultrasonic Sensors",
+        path: "/assets/logos/donotsvg.svg",
       },
       {
         id: 4,
@@ -241,40 +240,30 @@ export const mySocials = [
   },
 ];
 
-export const experiences = [
-  {
-    title: "Software Developer",
-    job: "Security & Defense Projects",
-    date: "2021-2023",
+export const education = [
+  { 
+    title: "Bachelor of Information and Communication Technology",
+    job: "University of Sri Jayewardenepura",
+    date: "2023-2027",
     contents: [
-      "Enhanced application security and developed new features, adhering to standards set by the Passive Defense Organization and National Cyberspace Center.",
-      "Designed and implemented intuitive map interfaces using MapsUI, enhancing user experience and enabling seamless interactive map integration.",
-      "Developed applications for industrial automation, leveraging C++ and the Fatek API for PLC communication.",
-      "Enhanced responsiveness and usability of applications using Windows Forms and WPF frameworks.",
-      "Executed XML to SVG conversions using X-DOM, ensuring dynamic and efficient data visualization.",
+      "The University of Sri Jayewardenepura is a leading state university in Sri Lanka, known for its industry-focused ICT education and strong academic foundation",
+      "The degree program provides solid expertise in Software Development, including Object-Oriented Programming (OOP), Data Structures & Algorithms, Software Engineering, MERN-Stack, and Web & Mobile Application Development, enabling students to build scalable, real-world solutions.",
+      "The curriculum also covers Data Science & AI, with emphasis on Machine Learning, Data Mining & Warehousing, and Data Analytics, alongside core knowledge in Systems & Infrastructure such as DBMS, Operating Systems, Computer Networks, and Cloud Computing.",
+      "Exposure to Specialized Technologies including IoT with Embedded Systems and Cybersecurity prepares graduates to adapt to emerging technologies and industry demands."
     ],
   },
   {
-    title: "Back-End Developer",
-    job: "Car Manufacture",
-    date: "2023-2024",
+    title: "GCE Advanced Level Examination",
+    job: "Richmond College, Galle",
+    date: "2021(2022)",
     contents: [
-      "Engineered systems for large-scale data ingestion and analysis, ensuring efficient data processing and storage.",
-      "Developed back-end systems enabling vehicle-to-cloud communication for telemetry, diagnostics, and remote control:",
-      "✅ Implemented secure APIs, following ISO 26262 automotive safety standards.",
-      "✅ Ensured data privacy for customers and partners through industry-compliant protocols.",
-      "✅ Delivered remote features like over-the-air updates, real-time tracking, and remote start capabilities.",
+      "Richmond College, Galle is one of Sri Lanka’s most prestigious national schools, recognized for its long-standing tradition of academic excellence, discipline, and all-round student development",
+      "The school provides a highly competitive learning environment that emphasizes critical thinking, leadership, and strong moral values.",
+      "I completed my G.C.E. Advanced Level studies at Richmond College, specializing in a rigorous academic stream, and achieved 3 As, securing 13th place in the Galle District.This achievement reflects strong analytical skills, dedication to academic excellence, and the ability to perform at a high level in a competitive national examination.",
+      "The academic foundation gained at Richmond College played a significant role in shaping my problem-solving mindset, work ethic, and readiness for higher education in the field of technology and engineering.",
     ],
   },
-  {
-    title: "Freelance Developer",
-    job: "Self-Employed",
-    date: "2025-Present",
-    contents: [
-      "Created a personal portfolio using Three.js, React, Vite, and WebAPI to showcase technical expertise.",
-      "Continuously enhancing technical skills and expanding expertise in modern web development and back-end technologies.",
-    ],
-  },
+ 
 ];
 export const reviews = [
   {
