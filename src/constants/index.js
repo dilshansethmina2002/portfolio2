@@ -38,6 +38,43 @@ export const myProjects = [
   },
   {
     id: 2,
+    title: "Lanka Route",
+    description:
+      "international tourists in Sri Lanka by combining interactive route planning with real-time destination discovery and itinerary management.",
+    subDescription: [
+      "Engineered a dynamic React dashboard that integrates Google Maps and Places APIs to visualize routes and fetch real-time location data (photos, reviews) instantly.",
+      "Implemented automated logic to calculate total trip distances and estimate travel costs, reducing manual planning time for users.",
+      "Developed a responsive sidebar navigation with a modal-based detail view, allowing users to explore destination insights without disrupting their planning workflow.",
+      "Designed a drag-and-drop interface for flexible day-to-day itinerary scheduling, optimizing user experience and engagement.",
+    ],
+    href: "https://github.com/dilshansethmina2002/Travel-guid",
+    logo: "",
+    image: "/assets/projects/LankaRoute.png",
+    tags: [
+      {
+        id: 1,
+        name: "Google Maps API",
+        path: "/assets/logos/Google.svg",
+      },
+      {
+        id: 2,
+        name: "React.js",
+        path: "/assets/logos/react.svg",
+      },
+      {
+        id: 3,
+        name: "Node.js",
+        path: "/assets/logos/Node.js.svg",
+      },
+      {
+        id: 4,
+        name: "TailwindCSS",
+        path: "/assets/logos/tailwindcss.svg",
+      },
+    ],
+  },
+  {
+    id: 3,
     title: "Lost & Found Web Application",
     description:
       "Lost & Found Web Application Connects community members to facilitate the recovery of lost items through a centralized digital reporting and search platform.",
@@ -74,7 +111,7 @@ export const myProjects = [
     ],
   },
   {
-    id: 3,
+    id: 4,
     title: "Travel Website",
     description:
       "Responsive Travel Website Showcases tourist destinations through a visually immersive and fully responsive platform, delivering a seamless browsing experience across all devices.",
@@ -109,8 +146,10 @@ export const myProjects = [
       },
     ],
   },
+
+   
   {
-    id: 4,
+    id: 5,
     title: "IoT & Automation Project",
     description:
       "IoT-Based Product Quality Checking System Automates the quality assurance process in manufacturing lines by detecting, sorting, and tracking products based on color and physical dimensions.",
@@ -146,80 +185,8 @@ export const myProjects = [
       },
     ],
   },
-  {
-    id: 5,
-    title: "WordPress Custom Theme",
-    description:
-      "A fully customizable WordPress theme optimized for performance and SEO.",
-    subDescription: [
-      "Developed a responsive WordPress theme using HTML5, CSS3, and JavaScript.",
-      "Integrated Tailwind CSS for modern styling and UI enhancements.",
-      "Optimized SEO and page speed using Vite.js for fast builds.",
-      "Implemented custom widgets and plugin compatibility for extended functionality.",
-    ],
-    href: "",
-    logo: "",
-    image: "/assets/projects/wordpress-theme.jpg",
-    tags: [
-      {
-        id: 1,
-        name: "WordPress",
-        path: "/assets/logos/wordpress.svg",
-      },
-      {
-        id: 2,
-        name: "HTML5",
-        path: "/assets/logos/html5.svg",
-      },
-      {
-        id: 3,
-        name: "CSS3",
-        path: "/assets/logos/css3.svg",
-      },
-      {
-        id: 4,
-        name: "Vite.js",
-        path: "/assets/logos/vitejs.svg",
-      },
-    ],
-  },
-  {
-    id: 6,
-    title: "Online Learning Platform",
-    description:
-      "A web application that allows users to enroll in courses, watch video lectures, and take quizzes.",
-    subDescription: [
-      "Built using Blazor WebAssembly for a seamless SPA experience.",
-      "Implemented video streaming with Azure Media Services.",
-      "Added a quiz system with dynamic question generation and real-time grading.",
-      "Integrated Stripe API for secure payment processing.",
-    ],
-    href: "",
-    logo: "",
-    image: "/assets/projects/elearning.jpg",
-    tags: [
-      {
-        id: 1,
-        name: "Blazor",
-        path: "/assets/logos/blazor.svg",
-      },
-      {
-        id: 2,
-        name: "Azure",
-        path: "/assets/logos/azure.svg",
-      },
-      {
-        id: 3,
-        name: "Stripe",
-        path: "/assets/logos/stripe.svg",
-      },
-      {
-        id: 4,
-        name: "TailwindCSS",
-        path: "/assets/logos/tailwindcss.svg",
-      },
-    ],
-  },
+ 
+
 ];
 
 export const mySocials = [

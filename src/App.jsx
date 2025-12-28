@@ -4,10 +4,8 @@ import Hero from "./sections/Hero";
 import About from "./sections/About";
 import Projects from "./sections/Projects";
 import Education from "./sections/Education";
-import Testimonial from "./sections/Testimonial";
 import Contact from "./sections/Contact";
 import Footer from './sections/Footer';
-import SplashCursor from "./components/SplashCursor";
 
 
 
@@ -20,7 +18,6 @@ const App = () => {
       <About />
       <Projects />
       <Education />
-      <Testimonial />
       <Contact />
       <Footer/>
     </div>
