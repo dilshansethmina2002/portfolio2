@@ -5,22 +5,18 @@ import Astronaut from "../components/Astronaut";
 import { Float, OrbitControls } from "@react-three/drei";
 import { useMediaQuery } from "react-responsive";
 import { easing } from "maath";
-import { Suspense } from "react";
+import { Suspense, useRef } from "react";
 import Loader from "../components/Loader";
-import { useRef } from "react";
-import { s } from "motion/react-client";
 import AnimatedButton from "../components/AnimatedButton";
 
 const Hero = () => {
-  // 1. Adjust the breakpoint if needed
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const aboutSec = useRef(null);
+  
+  // 1. Create a reference for the group we want to move with the mouse
+  const heroGroupRef = useRef(); 
 
-
-
-  const astronautRef = useRef();
-  const screenScale = isMobile ? 0.3 : 0.45;
-  const screenPosition = isMobile ? [0, -80, 0] : [50,-80, 3];
+  const screenScale = isMobile ? 0.15 : 0.20;
+  const screenPosition = isMobile ? [0, -30, 0] : [20, -40, 3];
   const rotation = [-1.3, -0.5, 0];
 
   const scrollToAbout = () => {
@@ -31,62 +27,69 @@ const Hero = () => {
   }
 
   return (
-    <section className="flex items-start justify-center min-h-screen overflow-hidden md:items-start md:justify-start c-space " id="home">
+    <section className="flex items-start justify-center min-h-screen overflow-hidden md:items-start md:justify-start c-space" id="home">
       <HeroText />
       <ParallaxBackground />
       <figure
-        className="absolute bottom-0 w-full h-[50vh] pointer-events-none flex z-10 md:bottom-auto md:top-0 md:right-0 md:h-full "
-        style={ isMobile ? { width: "100vw", height: "100vh" } : { width: "100vw", height: "100vh" }}
+        className="absolute bottom-0 w-full h-[50vh] pointer-events-none flex z-10 md:bottom-auto md:top-0 md:right-0 md:h-full"
+        style={{ width: "100vw", height: "100vh" }}
       >
-        <Canvas  camera={{ position: [0, 0, 0] } }
+        <Canvas
+          camera={{ position: [0, 0, 30] }} // Set a fixed initial camera position
+          gl={{ antialias: true }}
+          dpr={[1, 2]}
           style={{ pointerEvents: "auto" }}
         >
-
-          {/* 3. LIGHTING IS ESSENTIAL */}
-          {/* Ambient light provides base brightness so it's not black */}
           <ambientLight intensity={0.5} />
-          {/* Directional light acts like the sun, creating shadows and depth */}
           <directionalLight position={[10, 10, 10]} intensity={2} />
           
           <Suspense fallback={<Loader />}>
-            <Float speed={1} rotationIntensity={3} floatIntensity={5}>
-              <Astronaut 
-                ref={astronautRef} 
-                scale={screenScale} 
-                position={screenPosition} 
-                rotation={rotation} 
-              />
-            </Float>
-            <Rig astronautRef={astronautRef} />
+            {/* 2. Wrap everything in a group referenced by heroGroupRef */}
+            <group ref={heroGroupRef}>
+              <Float speed={1} rotationIntensity={3} floatIntensity={2}>
+                <Astronaut 
+                  scale={screenScale} 
+                  position={screenPosition} 
+                  rotation={rotation} 
+                />
+              </Float>
+            </group>
+
+            {/* 3. Pass the group ref to the Rig, NOT the camera */}
+            <Rig objectRef={heroGroupRef} />
+
             <OrbitControls 
               enableZoom={false}
               enablePan={false}
               enableRotate={true}
-              enabled={!isMobile}
+              enabled={!isMobile} // This now works safely
               makeDefault
             />
-            <Rig />
           </Suspense>
         </Canvas>
       </figure>
+
       <div className="absolute bottom-10 w-full flex z-20"
         style={ isMobile ? { justifyContent: "center" } : { left:"40%"}}
         onClick={scrollToAbout}
       >
         <AnimatedButton />
-
       </div>
-      
     </section>
   );
 };
 
-function Rig() {
-  return useFrame((state, delta) => {
+// 4. Update Rig to move the OBJECT (group), not the CAMERA
+function Rig({ objectRef }) {
+  useFrame((state, delta) => {
+    if (!objectRef.current) return;
+
+    // This creates a subtle rotation/parallax effect on the model based on mouse position
+    // We adjust rotation x and y. You can also adjust position if you prefer.
     easing.damp3(
-      state.camera.position,
-      [state.pointer.x * 10, state.pointer.y * 10, 100], // Reduced movement sensitivity
-      0.25,
+      objectRef.current.rotation, 
+      [state.pointer.y / 5, -state.pointer.x / 5, 0], 
+      0.25, 
       delta
     );
   });

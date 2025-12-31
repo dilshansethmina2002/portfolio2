@@ -9,6 +9,26 @@ export default function Astronaut(props) {
   const Astronaut = forwardRef((props, ref) => {
   const { nodes, materials, animations } = useGLTF('/models/gundam_unicorn.glb');
   
+  // Ensure smooth shading: disable flatShading and recompute vertex normals
+  useEffect(() => {
+    if (materials) {
+      Object.values(materials).forEach((m) => {
+        if (m && m.flatShading !== undefined) {
+          m.flatShading = false;
+          m.needsUpdate = true;
+        }
+      });
+    }
+
+    if (nodes) {
+      Object.values(nodes).forEach((n) => {
+        if (n && n.geometry && n.geometry.computeVertexNormals) {
+          n.geometry.computeVertexNormals();
+        }
+      });
+    }
+  }, [materials, nodes]);
+
   // Use a local ref for animations, but the forwarded ref for the Hero component
   const group = useRef();
   const { actions } = useAnimations(animations, group);
