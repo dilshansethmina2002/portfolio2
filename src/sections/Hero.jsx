@@ -20,7 +20,7 @@ const Hero = () => {
 
   const astronautRef = useRef();
   const screenScale = isMobile ? 0.3 : 0.45;
-  const screenPosition = isMobile ? [0, -50, 0] : [50,-80, 3];
+  const screenPosition = isMobile ? [0, -80, 0] : [50,-80, 3];
   const rotation = [-1.3, -0.5, 0];
 
   const scrollToAbout = () => {
@@ -31,12 +31,12 @@ const Hero = () => {
   }
 
   return (
-    <section className="flex items-start justify-center min-h-screen overflow-hidden md:items-start md:justify-start c-space ">
+    <section className="flex items-start justify-center min-h-screen overflow-hidden md:items-start md:justify-start c-space " id="home">
       <HeroText />
       <ParallaxBackground />
       <figure
         className="absolute bottom-0 w-full h-[50vh] pointer-events-none flex z-10 md:bottom-auto md:top-0 md:right-0 md:h-full "
-        style={ isMobile ? { width: "80vw", height: "80vh" } : { width: "100vw", height: "100vh" }}
+        style={ isMobile ? { width: "100vw", height: "100vh" } : { width: "100vw", height: "100vh" }}
       >
         <Canvas  camera={{ position: [0, 0, 0] } }
           style={{ pointerEvents: "auto" }}
@@ -46,10 +46,10 @@ const Hero = () => {
           {/* Ambient light provides base brightness so it's not black */}
           <ambientLight intensity={0.5} />
           {/* Directional light acts like the sun, creating shadows and depth */}
-          <directionalLight position={[10, 10, 10]} intensity={5} />
+          <directionalLight position={[10, 10, 10]} intensity={2} />
           
           <Suspense fallback={<Loader />}>
-            <Float speed={2} rotationIntensity={1} floatIntensity={1}>
+            <Float speed={1} rotationIntensity={3} floatIntensity={5}>
               <Astronaut 
                 ref={astronautRef} 
                 scale={screenScale} 
