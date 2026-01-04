@@ -8,6 +8,7 @@ import { easing } from "maath";
 import { Suspense, useRef } from "react";
 import Loader from "../components/Loader";
 import AnimatedButton from "../components/AnimatedButton";
+import SoundController from "../components/SoundController";
 
 const Hero = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -15,8 +16,8 @@ const Hero = () => {
   // 1. Create a reference for the group we want to move with the mouse
   const heroGroupRef = useRef(); 
 
-  const screenScale = isMobile ? 0.15 : 0.20;
-  const screenPosition = isMobile ? [0, -30, 0] : [20, -40, 3];
+  const screenScale = isMobile ? 0.15 : 0.15;
+  const screenPosition = isMobile ? [0, -30, 0] : [20, -27, 3];
   const rotation = [-1.3, -0.5, 0];
 
   const scrollToAbout = () => {
@@ -29,6 +30,7 @@ const Hero = () => {
   return (
     <section className="flex items-start justify-center min-h-screen overflow-hidden md:items-start md:justify-start c-space" id="home">
       <HeroText />
+      <SoundController />
       <ParallaxBackground />
       <figure
         className="absolute bottom-0 w-full h-[50vh] pointer-events-none flex z-10 md:bottom-auto md:top-0 md:right-0 md:h-full"
@@ -46,7 +48,7 @@ const Hero = () => {
           <Suspense fallback={<Loader />}>
             {/* 2. Wrap everything in a group referenced by heroGroupRef */}
             <group ref={heroGroupRef}>
-              <Float speed={1} rotationIntensity={3} floatIntensity={2}>
+              <Float speed={1} rotationIntensity={1} floatIntensity={1}>
                 <Astronaut 
                   scale={screenScale} 
                   position={screenPosition} 
