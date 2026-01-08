@@ -33,9 +33,7 @@ const SoundController = () => {
       audioRef.current.pause();
     } else {
       // Browser requires user interaction to play audio
-      audioRef.current.play().catch((error) => {
-        console.log("Audio play failed due to browser policy:", error);
-      });
+      audioRef.current.play();
     }
     setIsPlaying(!isPlaying);
   };

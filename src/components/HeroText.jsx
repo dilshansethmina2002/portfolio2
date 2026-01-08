@@ -1,6 +1,7 @@
 import { FlipWords } from "./FlipWords";
 import { FlipWord2 } from "./FlipWord2";
 import { motion } from "motion/react";
+// import AppleHelloEffect from "./AppleHelloEffect";
 
 const HeroText = () => {
   const words = ["Creative", "Modern", "Stylish", "Responsive", "Innovative"];
@@ -15,15 +16,7 @@ const HeroText = () => {
      
       {/* Desktop View */}
       <div className="flex-col hidden md:flex c-space">
-        <motion.h1
-          className="text-6xl font-medium text-neutral-300 "
-          variants={variants}
-          initial="hidden"
-          animate="visible"
-          transition={{ delay: 1 }}
-        >
-          Hi I'm Sethmina
-        </motion.h1>
+        {/* <AppleHelloEffect /> */}
         <div className="flex flex-col items-start">
           <motion.div
             className="text-5xl font-medium text-neutral-300"

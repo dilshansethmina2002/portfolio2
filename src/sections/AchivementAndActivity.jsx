@@ -1,190 +1,200 @@
-import { motion, useScroll, useTransform } from "motion/react"
-import { useRef } from "react"
+import { useScroll, useTransform, motion } from "framer-motion";
+import { useEffect, useRef } from "react";
+import Lenis from "lenis";
 
-const CARD_WIDTH = 340
-const GAP = 48
+export default function PerspectiveStack() {
+  const container = useRef(null);
 
-export default function AchievementsAndActivities() {
-    const sectionRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: container,
+    offset: ["start start", "end end"],
+  });
 
-    const { scrollYProgress } = useScroll({
-        target: sectionRef,
-        offset: ["start start", "end end"],
-    })
+  useEffect(() => {
+    const lenis = new Lenis();
 
-    const totalMove =
-        (items.length - 1) * (CARD_WIDTH + GAP)
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
 
-    const x = useTransform(
-        scrollYProgress,
-        [0, 1],
-        [0, -totalMove]
-    )
+    requestAnimationFrame(raf);
+  }, []);
 
-    return (
-        <section ref={sectionRef} style={track}>
-            <div style={sticky}>
-                <motion.div style={{ ...row, x }}>
-                    {items.map((item, i) => (
-                        <AchievementCard
-                            key={item.title}
-                            item={item}
-                            index={i}
-                            total={items.length}
-                            progress={scrollYProgress}
-                        />
-                    ))}
-                </motion.div>
-            </div>
-        </section>
-    )
-}
-
-/* ================= CARD ================= */
-
-function AchievementCard({ item, index, total, progress }) {
-    const step = 1 / (total - 1)
-    const center = index * step
-    const range = [center - 0.18, center, center + 0.18]
-
-    const scale = useTransform(progress, range, [0.9, 1.08, 0.9], { clamp: true })
-    const y = useTransform(progress, range, [30, -12, 30], { clamp: true })
-    const opacity = useTransform(progress, range, [0.35, 1, 0.35], { clamp: true })
-    const blur = useTransform(progress, range, ["blur(8px)", "blur(0px)", "blur(8px)"])
-    const shadow = useTransform(progress, range, [
-        "0 10px 30px rgba(0,0,0,0.15)",
-        "0 35px 70px rgba(0,0,0,0.35)",
-        "0 10px 30px rgba(0,0,0,0.15)",
-    ])
-
-    return (
-        <motion.article
-            style={{
-                ...card,
-                scale,
-                y,
-                opacity,
-                filter: blur,
-                boxShadow: shadow,
-            }}
+  return (
+    <main
+      ref={container}
+      className="relative min-h-screen bg-[#050505] pb-[20vh] font-sans"
+    >
+      {/* HEADER */}
+      <div className="relative z-10 flex h-[70vh] flex-col items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="px-4 text-center"
         >
-            <span style={badge}>{item.type}</span>
+          <h1 className="mb-4 text-4xl font-extrabold tracking-tighter text-white md:text-6xl lg:text-7xl">
+            My Journey &{" "}
+            <span className="bg-gradient-to-br from-purple-500 to-blue-500 bg-clip-text text-transparent">
+              Milestones
+            </span>
+          </h1>
+          <p className="text-base tracking-wide text-slate-400 md:text-xl">
+            Scroll to explore the archive
+          </p>
+        </motion.div>
+      </div>
 
-            <h3 style={title}>{item.title}</h3>
+      {/* STACK WRAPPER */}
+      <div className="px-4 md:px-0">
+        {items.map((item, i) => {
+          const targetScale = 1 - (items.length - i) * 0.05;
+          return (
+            <Card
+              key={i}
+              i={i}
+              {...item}
+              progress={scrollYProgress}
+              range={[i * 0.25, 1]}
+              targetScale={targetScale}
+            />
+          );
+        })}
+      </div>
+    </main>
+  );
+}
 
-            <p style={desc}>{item.description}</p>
+const Card = ({
+  i,
+  title,
+  description,
+  year,
+  org,
+  type,
+  color,
+  progress,
+  range,
+  targetScale,
+}) => {
+  const container = useRef(null);
 
-            <div style={footer}>
-                <span>{item.year}</span>
-                <span style={dot}>•</span>
-                <span>{item.org}</span>
+  const { scrollYProgress } = useScroll({
+    target: container,
+    offset: ["start end", "start start"],
+  });
+
+  const imageScale = useTransform(scrollYProgress, [0, 1], [2, 1]);
+  const scale = useTransform(progress, range, [1, targetScale]);
+
+  return (
+    <div
+      ref={container}
+      className="sticky top-0 flex h-screen items-center justify-center"
+    >
+      <motion.div
+        style={{
+          backgroundColor: color, // Dynamic background color from data
+          scale,
+          top: `calc(-5vh + ${i * 25}px)`, // Dynamic stacking offset
+        }}
+        className="relative flex h-[450px] w-[1000px] max-w-[95%] origin-top flex-col justify-between overflow-hidden rounded-[32px] border border-white/10 p-8 shadow-[0_-10px_50px_-10px_rgba(0,0,0,0.8)] md:p-12"
+      >
+        {/* Card Content Layer */}
+        <div className="relative z-10 flex h-full flex-col justify-between">
+          {/* Top Row: Badge & Year */}
+          <div className="flex items-center justify-between">
+            <span className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-slate-200 backdrop-blur-md">
+              {type}
+            </span>
+            <span className="font-mono text-sm text-slate-400">{year}</span>
+          </div>
+
+          {/* Middle: Title & Org */}
+          <div>
+            <h2 className="mb-2 text-3xl font-bold leading-tight text-white md:text-5xl">
+              {title}
+            </h2>
+            <div className="mb-6 flex items-baseline gap-2 text-lg md:text-xl">
+              <span className="italic text-slate-500">at</span>
+              <span className="font-semibold text-purple-400">{org}</span>
             </div>
-        </motion.article>
-    )
-}
+            <p className="max-w-2xl text-base leading-relaxed text-slate-300 md:text-lg">
+              {description}
+            </p>
+          </div>
 
-/* ================= STYLES ================= */
+          {/* Bottom: Progress Bar Indicator */}
+          <div className="mt-auto">
+            <div className="h-[2px] w-full bg-gradient-to-r from-purple-500 to-transparent opacity-50" />
+          </div>
+        </div>
 
-const track = {
-    height: "500vh",
-    position: "relative",
-}
-
-const sticky = {
-    position: "sticky",
-    top: 0,
-    height: "100vh",
-    display: "flex",
-    alignItems: "center",
-    overflow: "hidden",
-}
-
-const row = {
-    display: "flex",
-    gap: `${GAP}px`,
-    paddingLeft: `calc(50vw - ${CARD_WIDTH / 2}px)`,
-    width: "max-content",
-}
-
-const card = {
-    width: `${CARD_WIDTH}px`,
-    height: "420px",
-    background: "linear-gradient(180deg, #ffffff, #f3f3f3)",
-    borderRadius: "22px",
-    padding: "28px",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-}
-
-const badge = {
-    alignSelf: "flex-start",
-    padding: "6px 14px",
-    borderRadius: "999px",
-    background: "#111",
-    color: "#fff",
-    fontSize: "12px",
-    letterSpacing: "0.5px",
-}
-
-const title = {
-    fontSize: "24px",
-    fontWeight: 600,
-    marginTop: "16px",
-}
-
-const desc = {
-    fontSize: "15px",
-    lineHeight: 1.6,
-    color: "#555",
-    flexGrow: 1,
-    marginTop: "12px",
-}
-
-const footer = {
-    fontSize: "13px",
-    color: "#777",
-    display: "flex",
-    alignItems: "center",
-}
-
-const dot = {
-    margin: "0 8px",
-}
+        {/* Decorative Background Layer */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <motion.div
+            style={{ scale: imageScale }}
+            className="relative h-full w-full"
+          >
+            {/* Dot Pattern */}
+            <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.07)_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:linear-gradient(to_bottom,black_40%,transparent_100%)]" />
+            
+            {/* Gradient Blob */}
+            <div className="absolute -bottom-[20%] -right-[10%] h-[80%] w-[60%] bg-[radial-gradient(circle_closest-side,rgba(168,85,247,0.15),transparent)] blur-[60px]" />
+          </motion.div>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
 
 /* ================= DATA ================= */
 
 const items = [
-    {
-        title: "Software Engineering Undergraduate",
-        description:
-            "Completed core modules in OOP, Data Structures, Software Engineering, and Web Development.",
-        year: "2021 – Present",
-        org: "University of Sri Jayewardenepura",
-        type: "Education",
-    },
-    {
-        title: "Hackathon Finalist",
-        description:
-            "Built a full-stack solution under 24 hours with real-world problem constraints.",
-        year: "2024",
-        org: "ICTS Society",
-        type: "Achievement",
-    },
-    {
-        title: "Zero Waste Club Member",
-        description:
-            "Actively involved in sustainability projects and awareness programs.",
-        year: "2023",
-        org: "USJ",
-        type: "Activity",
-    },
-    {
-        title: "YouTube Content Creator",
-        description:
-            "Created tech-focused content covering development, tools, and learning paths.",
-        year: "2024",
-        org: "YouTube",
-        type: "Activity",
-    },
-]
+  {
+    title: "Financial Coordinator",
+    description:
+      "Executive Board member managing financial planning, budget allocation, and fiscal transparency for the 2025/2026 tenure.",
+    year: "2025 – Present",
+    org: "ICTS Society",
+    type: "Leadership",
+    color: "#111111", // Keeping hex colors for dynamic prop mapping
+  },
+  {
+    title: "Multicloud Network Associate",
+    description:
+      "Aviatrix certified expert in enterprise cloud networking. Validated expertise in designing, securing, and operating multi-cloud architectures.",
+    year: "2025",
+    org: "Aviatrix",
+    type: "Certification",
+    color: "#0f172a", // Slate 900
+  },
+  {
+    title: "J'Pura CryptX 1.0",
+    description:
+      "Core organizer for Project Management and HR. Coordinated team logistics to ensure the successful execution of this major tech event.",
+    year: "2025",
+    org: "ICTS Society",
+    type: "Event Mgmt",
+    color: "#18181b", // Zinc 900
+  },
+  {
+    title: "AI & Tech Careers",
+    description:
+      "Explored the intersection of AI tools and modern careers. Gained insights into leveraging AI to optimize professional workflows.",
+    year: "2025",
+    org: "ICTS Society",
+    type: "Workshop",
+    color: "#171717", // Neutral 900
+  },
+  {
+    title: "Prompt Engineering",
+    description:
+      "Acquired advanced skills in LLM interaction and prompting techniques to enhance AI model outputs for complex problem solving.",
+    year: "2024",
+    org: "USJ",
+    type: "Workshop",
+    color: "#0c0a09", // Stone 950
+  },
+];

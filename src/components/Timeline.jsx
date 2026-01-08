@@ -30,7 +30,12 @@ export const Timeline = ({ data }) => {
       className="w-full c-space section-spacing bg-transparent"
       ref={containerRef}
     >
-      <h2 className="text-heading mb-8">My Education</h2>
+      <h1 className="mb-4 text-4xl font-extrabold tracking-tighter text-center text-white md:text-6xl lg:text-7xl">
+            My {" "}
+            <span className="bg-gradient-to-br from-purple-500 to-blue-500 bg-clip-text text-transparent">
+              Education
+            </span>
+      </h1>
 
       <div ref={ref} className="relative pb-20">
         {data.map((item, index) => (
