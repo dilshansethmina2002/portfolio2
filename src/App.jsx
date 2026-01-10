@@ -7,14 +7,11 @@ import Education from "./sections/Education";
 import Contact from "./sections/Contact";
 import Footer from './sections/Footer';
 import AchivementAndActivity from "./sections/AchivementAndActivity";
-import ReflectBackground from "./components/ReflectBackground";
-
 
 
 const App = () => {
   return (
-    <div className="container mx-auto">
-      {/* <SplashCursor /> */}
+    <div className="w-full">
       <Navbar />
       <Hero />
       <About />

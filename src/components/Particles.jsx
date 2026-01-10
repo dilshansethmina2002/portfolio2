@@ -49,6 +49,7 @@ export const Particles = ({
   color = "#ffffff",
   vx = 0,
   vy = 0,
+  shape = "circle",
   ...props
 }) => {
   const canvasRef = useRef(null);
@@ -89,7 +90,7 @@ export const Particles = ({
       }
       window.removeEventListener("resize", handleResize);
     };
-  }, [color]);
+  }, [color, shape]);
 
   useEffect(() => {
     onMouseMove();
@@ -129,7 +130,6 @@ export const Particles = ({
       canvasRef.current.style.height = `${canvasSize.current.h}px`;
       context.current.scale(dpr, dpr);
 
-      // Clear existing particles and create new ones with exact quantity
       circles.current = [];
       for (let i = 0; i < quantity; i++) {
         const circle = circleParams();
@@ -143,7 +143,7 @@ export const Particles = ({
     const y = Math.floor(Math.random() * canvasSize.current.h);
     const translateX = 0;
     const translateY = 0;
-    const pSize = Math.floor(Math.random() * 2) + size;
+    const pSize = Math.random() * 2 + size;
     const alpha = 0;
     const targetAlpha = parseFloat((Math.random() * 0.6 + 0.1).toFixed(1));
     const dx = (Math.random() - 0.5) * 0.1;
@@ -170,7 +170,13 @@ export const Particles = ({
       const { x, y, translateX, translateY, size, alpha } = circle;
       context.current.translate(translateX, translateY);
       context.current.beginPath();
-      context.current.arc(x, y, size, 0, 2 * Math.PI);
+      
+      if (shape === "square") {
+        context.current.rect(x, y, size, size);
+      } else {
+        context.current.arc(x, y, size, 0, 2 * Math.PI);
+      }
+      
       context.current.fillStyle = `rgba(${rgb.join(", ")}, ${alpha})`;
       context.current.fill();
       context.current.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -210,12 +216,12 @@ export const Particles = ({
   const animate = () => {
     clearContext();
     circles.current.forEach((circle, i) => {
-      // Handle the alpha value
+      // 1. Edge Detection & Alpha Logic
       const edge = [
-        circle.x + circle.translateX - circle.size, // distance from left edge
-        canvasSize.current.w - circle.x - circle.translateX - circle.size, // distance from right edge
-        circle.y + circle.translateY - circle.size, // distance from top edge
-        canvasSize.current.h - circle.y - circle.translateY - circle.size, // distance from bottom edge
+        circle.x + circle.translateX - circle.size,
+        canvasSize.current.w - circle.x - circle.translateX - circle.size,
+        circle.y + circle.translateY - circle.size,
+        canvasSize.current.h - circle.y - circle.translateY - circle.size,
       ];
       const closestEdge = edge.reduce((a, b) => Math.min(a, b));
       const remapClosestEdge = parseFloat(
@@ -229,27 +235,50 @@ export const Particles = ({
       } else {
         circle.alpha = circle.targetAlpha * remapClosestEdge;
       }
+
+      // 2. Base Movement (Flow)
       circle.x += circle.dx + vx;
       circle.y += circle.dy + vy;
-      circle.translateX +=
-        (mouse.current.x / (staticity / circle.magnetism) - circle.translateX) /
-        ease;
-      circle.translateY +=
-        (mouse.current.y / (staticity / circle.magnetism) - circle.translateY) /
-        ease;
+
+      // 3. Mouse Interaction (Repulsion Logic)
+      // Convert Mouse to Top-Left Coords for comparison with circle.x/y
+      const mouseX = mouse.current.x + canvasSize.current.w / 2;
+      const mouseY = mouse.current.y + canvasSize.current.h / 2;
+
+      const dx = mouseX - (circle.x + circle.translateX);
+      const dy = mouseY - (circle.y + circle.translateY);
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      const interactionRadius = 120; // How close mouse needs to be to affect particle
+
+      if (distance < interactionRadius) {
+        const forceDirectionX = dx / distance;
+        const forceDirectionY = dy / distance;
+        
+        // The closer the mouse, the stronger the push
+        const force = (interactionRadius - distance) / interactionRadius; 
+        
+        // Push the particle away (Negative value pushes away, Positive pulls in)
+        const repulsionStrength = 5; 
+        circle.translateX -= forceDirectionX * force * repulsionStrength;
+        circle.translateY -= forceDirectionY * force * repulsionStrength;
+      }
+
+      // 4. Spring Back to Original Position (Ease)
+      // This creates the "bouncy" return effect
+      circle.translateX -= circle.translateX * 0.05; // Friction/Return speed
+      circle.translateY -= circle.translateY * 0.05;
 
       drawCircle(circle, true);
 
-      // circle gets out of the canvas
+      // 5. Bounds Check
       if (
         circle.x < -circle.size ||
         circle.x > canvasSize.current.w + circle.size ||
         circle.y < -circle.size ||
         circle.y > canvasSize.current.h + circle.size
       ) {
-        // remove the circle from the array
         circles.current.splice(i, 1);
-        // create a new circle
         const newCircle = circleParams();
         drawCircle(newCircle);
       }

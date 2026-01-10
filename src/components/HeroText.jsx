@@ -16,7 +16,18 @@ const HeroText = () => {
      
       {/* Desktop View */}
       <div className="flex-col hidden md:flex c-space">
-        {/* <AppleHelloEffect /> */}
+        
+        <motion.div
+          className="text-5xl font-black text-neutral-300"
+          variants={variants}
+          initial="hidden"
+          animate="visible"
+          transition={{ delay: 1 }}
+        >
+          Hi,I'm Sethmina
+          <br />
+            </motion.div>
+
         <div className="flex flex-col items-start">
           <motion.div
             className="text-5xl font-medium text-neutral-300"
@@ -70,9 +81,6 @@ const HeroText = () => {
               className="font-black text-white text-5xl"
             />
         </motion.div>
-        
-        
-        
       </div>
     </div>
   );

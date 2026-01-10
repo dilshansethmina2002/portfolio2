@@ -1,57 +1,80 @@
 import { useState } from "react";
 import Project from "../components/Project";
-import ReflectBackground from "../components/ReflectBackground";
 import { myProjects } from "../constants";
 import { motion, useMotionValue, useSpring } from "motion/react";
+import { Particles } from "../components/Particles";
+
 const Projects = () => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const springX = useSpring(x, { damping: 10, stiffness: 50 });
-  const springY = useSpring(y, { damping: 10, stiffness: 50 });
+
+  // Adjusted physics for a smoother, more "premium" float feel
+  const springX = useSpring(x, { damping: 15, stiffness: 100 });
+  const springY = useSpring(y, { damping: 15, stiffness: 100 });
+
   const handleMouseMove = (e) => {
-    x.set(e.clientX + 20);
-    y.set(e.clientY + 20);
+    // Slight offset so the cursor doesn't block the top-left corner of the image
+    x.set(e.clientX + 15);
+    y.set(e.clientY + 15);
   };
+
   const [preview, setPreview] = useState(null);
+
   return (
     <section
       onMouseMove={handleMouseMove}
-      className="relative c-space section-spacing"
+      className="relative w-full py-24 bg-[#050505] overflow-hidden scroll-mt-28"
       id="projects"
     >
+      <div className="absolute inset-0 z-0">
+                      <Particles
+                          className="absolute inset-0"
+                          quantity={400}
+                          ease={500}
+                          color="#22c55e" 
+                          shape="square"  
+                          vx={0.5}
+                          vy={-0.5} 
+                      />
+              </div>
+      {/* Decorative Background Glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none" />
 
-      <ReflectBackground 
-        backdropBlurAmount="md" 
-        className="absolute inset-0 -z-10"
-      />
-      <h1 className="mb-4 text-4xl font-extrabold tracking-tighter text-center text-white md:text-6xl lg:text-7xl">
-            My {" "}
-            <span className="bg-gradient-to-br from-purple-500 to-blue-500 bg-clip-text text-transparent">
-              Projects
-            </span>
-      </h1>      
-      <div className="bg-gradient-to-r from-transparent via-neutral-700 to-transparent mt-12 h-[1px] w-full" />
-      {myProjects.map((project) => (
-        <Project key={project.id} {...project} setPreview={setPreview} />
-      ))}
+      <div className="relative z-10 max-w-screen-xl mx-auto px-6">
+        
+        <h1 className="mb-8 text-5xl md:text-7xl font-bold tracking-tight text-center text-white">
+          Selected{" "}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+            Works
+          </span>
+        </h1>
+
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-16" />
+
+        <div className="flex flex-col gap-4">
+          {myProjects.map((project) => (
+            <Project key={project.id} {...project} setPreview={setPreview} />
+          ))}
+        </div>
+      </div>
+
       {preview && (
         <motion.div
-          className="fixed top-0 left-0 z-40 pointer-events-none"
+          className="fixed top-0 left-0 z-50 pointer-events-none"
           style={{ x: springX, y: springY }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          transition={{ duration: 0.2 }}
         >
-          <div className="relative w-80 h-56">
-            <ReflectBackground
-              backdropBlurAmount="md"
-              edgeFade="55%"
-              blendMode="screen"
-              className="absolute inset-0 rounded-lg overflow-hidden"
-            />
+          <div className="relative w-[400px] aspect-[16/9] rounded-2xl overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl">
             <img
               src={preview}
-              className="absolute inset-0 object-cover w-full h-full rounded-lg shadow-lg"
-              alt=""
-              aria-hidden
+              className="absolute inset-0 object-cover w-full h-full"
+              alt="Project Preview"
             />
+            {/* Subtle overlay to ensure image blends nicely with dark mode */}
+            <div className="absolute inset-0 bg-black/10" />
           </div>
         </motion.div>
       )}

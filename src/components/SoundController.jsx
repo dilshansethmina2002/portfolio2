@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
-import { Stars } from "lucide-react";
 
 const SoundController = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -8,14 +7,30 @@ const SoundController = () => {
 
   // Initialize audio object once
   useEffect(() => {
-    // 1. Define the Audio Source (Replace with your local file in /public/assets/ if needed)
-    // This is a free nature/wind ambience sound
-    audioRef.current = new Audio("/assets/Hallelujah.mp3");
+    // 1. Define the Audio Source
+    audioRef.current = new Audio("/assets/BackgroundTrack.mp3");
 
     // 2. Settings
     audioRef.current.loop = true;   // Loop forever
     audioRef.current.volume = 0.2;  // Keep it subtle (20% volume)
-    
+
+    // 3. Attempt Autoplay
+    const playPromise = audioRef.current.play();
+
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          // Autoplay started successfully
+          setIsPlaying(true);
+        })
+        .catch((error) => {
+          // Autoplay was prevented by the browser. 
+          // State remains false, user must click button manually.
+          console.log("Autoplay prevented:", error);
+          setIsPlaying(false);
+        });
+    }
+
     return () => {
       // Cleanup when component unmounts
       if (audioRef.current) {
@@ -31,11 +46,11 @@ const SoundController = () => {
 
     if (isPlaying) {
       audioRef.current.pause();
+      setIsPlaying(false);
     } else {
-      // Browser requires user interaction to play audio
       audioRef.current.play();
+      setIsPlaying(true);
     }
-    setIsPlaying(!isPlaying);
   };
 
   return (

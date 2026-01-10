@@ -10,8 +10,9 @@ import {
 import { 
   Home, 
   User, 
-  Briefcase, 
-  Mail, 
+  GraduationCap, 
+  Mail,
+  Trophy, 
   LayoutGrid 
 } from "lucide-react"; // Icons for the dock
 
@@ -21,7 +22,8 @@ const LINKS = [
   { title: "About", icon: <User className="w-full h-full" />, href: "#about" },
   
   { title: "Projects", icon: <LayoutGrid className="w-full h-full" />, href: "#projects" },
-  { title: "Work", icon: <Briefcase className="w-full h-full" />, href: "#work" },
+  { title: "Education", icon: <GraduationCap className="w-full h-full" />, href: "#education" },
+  { title: "Achievements", icon: <Trophy className="w-full h-full" />, href: "#achievements" },
   { title: "Contact", icon: <Mail className="w-full h-full" />, href: "#contact" },
 ];
 

@@ -1,40 +1,29 @@
-import { twMerge } from "tailwind-merge";
-export default function Marquee({
-  className,
-  reverse = false,
-  pauseOnHover = false,
-  children,
-  vertical = false,
-  repeat = 4,
-  ...props
-}) {
+import { motion } from "framer-motion";
+
+const Marquee = ({ children, speed = 20, direction = "left" }) => {
   return (
-    <div
-      {...props}
-      className={twMerge(
-        `group flex overflow-hidden p-2 [--duration:40s] [--gap:1rem] [gap:var(--gap)] ${
-          vertical ? "flex-col" : "flex-row"
-        }`,
-        className
-      )}
-    >
-      {Array(repeat)
-        .fill(0)
-        .map((_, i) => (
-          <div
-            key={i}
-            className={twMerge(
-              "flex shrink-0 justify-around [gap:var(--gap)]",
-              vertical
-                ? "animate-marquee-vertical flex-col"
-                : "animate-marquee flex-row",
-              pauseOnHover && "group-hover:[animation-play-state:paused]",
-              reverse && "[animation-direction:reverse]"
-            )}
-          >
-            {children}
-          </div>
-        ))}
+    <div className="flex overflow-hidden whitespace-nowrap [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+      {/* Wrapper that moves */}
+      <motion.div
+        className="flex gap-10 min-w-full"
+        initial={{ x: direction === "left" ? "0%" : "-50%" }}
+        animate={{ x: direction === "left" ? "-50%" : "0%" }}
+        transition={{
+          ease: "linear",
+          duration: speed,
+          repeat: Infinity,
+        }}
+      >
+        {/* Render content twice for the loop effect */}
+        <div className="flex gap-10 flex-shrink-0 items-center">
+          {children}
+        </div>
+        <div className="flex gap-10 flex-shrink-0 items-center">
+          {children}
+        </div>
+      </motion.div>
     </div>
   );
-}
+};
+
+export default Marquee;

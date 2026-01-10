@@ -1,6 +1,7 @@
 import { useScroll, useTransform, motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import Lenis from "lenis";
+import { Particles } from "../components/Particles";
 
 export default function PerspectiveStack() {
   const container = useRef(null);
@@ -22,10 +23,22 @@ export default function PerspectiveStack() {
   }, []);
 
   return (
-    <main
+    <main id="achievements"
       ref={container}
-      className="relative min-h-screen bg-[#050505] pb-[20vh] font-sans"
+      className="relative min-h-screen bg-[#050505] pb-[20vh] font-sans scroll-mb"
     >
+       <div className="absolute inset-0 z-0">
+          <Particles
+              className="absolute inset-0"
+              quantity={400}
+              ease={500}
+              color="#22c55e" 
+              shape="square"  
+              vx={0.5}
+              vy={-0.5} 
+            />
+        </div>
+      
       {/* HEADER */}
       <div className="relative z-10 flex h-[70vh] flex-col items-center justify-center">
         <motion.div

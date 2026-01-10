@@ -1,10 +1,11 @@
 import { useRef, useState, useEffect } from "react";
-// 1. Import Framer Motion
 import { motion } from "framer-motion";
+import { Download, FileText } from "lucide-react"; // Import icons
 import Card from "../components/Card";
 import { Globe } from "../components/globe";
 import CopyEmailButton from "../components/CopyEmailButton";
 import { Frameworks } from "../components/FrameWorks";
+import { Particles } from "../components/Particles";
 
 // --- CSS STYLES ---
 const styles = `
@@ -55,7 +56,6 @@ const About = () => {
   });
 
   // --- ANIMATION SETTINGS ---
-  // 1. The Animation State
   const itemVariants = {
     hidden: { opacity: 0, y: 50, scale: 0.95 },
     visible: { 
@@ -66,14 +66,22 @@ const About = () => {
     }
   };
 
-  // 2. The Configuration
-  // 'once: false' means it animates EVERY time you scroll to it.
-  // 'amount: 0.3' means it triggers when 30% of the item is visible.
   const viewportConfig = { once: false, amount: 0.3 };
 
   return (
     <section className="c-space section-spacing py-20 relative overflow-hidden" id="about">
       <style>{styles}</style>
+      <div className="absolute inset-0 z-0">
+                      <Particles
+                          className="absolute inset-0"
+                          quantity={400}
+                          ease={500}
+                          color="#22c55e" 
+                          shape="square"  
+                          vx={0.5}
+                          vy={-0.5} 
+                      />
+              </div>
 
       {/* CRT Overlay */}
       <div className="absolute inset-0 crt-lines z-50 opacity-20 pointer-events-none mix-blend-overlay" />
@@ -137,8 +145,27 @@ const About = () => {
                         Over the last 3 years, I have optimized my neural networks (skills) through academic simulations and deployed production-grade code to the live server.
                     </p>
                     
-                    <div className="mt-auto w-full border-t border-white/5 pt-4">
-                        <CopyEmailButton />
+                    {/* BUTTON CONTAINER */}
+                    <div className="mt-auto w-full flex flex-col gap-3">
+                        
+                        {/* 1. Download CV Button (New) */}
+                        <a 
+                            href="/assets/Sethmina_CV.pdf" // ⚠️ Ensure this file exists in public/assets/
+                            download="Dilshan_Sethmina_CV.pdf"
+                            className="group w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-lg transition-all duration-300 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40"
+                        >
+                            <FileText className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                            <span className="font-medium text-sm">Download CV</span>
+                            <Download className="w-4 h-4 opacity-70 group-hover:translate-y-1 transition-transform" />
+                        </a>
+
+                        {/* Divider Line */}
+                        <div className="w-full h-[1px] bg-white/10" />
+
+                        {/* 2. Copy Email Button */}
+                        <div className="pt-1">
+                             <CopyEmailButton />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -193,10 +220,10 @@ const About = () => {
                     variants={itemVariants}
                     className="bg-[#0a0a0a] border border-zinc-800 rounded-3xl relative overflow-hidden group"
                 >
-                     <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:20px_20px]" />
-                     <div className="absolute top-5 left-5 z-20 bg-black/60 backdrop-blur px-3 py-1 rounded border border-white/10">
+                      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:20px_20px]" />
+                      <div className="absolute top-5 left-5 z-20 bg-black/60 backdrop-blur px-3 py-1 rounded border border-white/10">
                         <p className="text-xs font-mono text-indigo-400">MODE: INTERACTIVE</p>
-                     </div>
+                      </div>
 
                     <div ref={grid2Container} className="w-full h-full relative z-10 hover:cursor-grab active:cursor-grabbing">
                         <Card style={{ rotate: "12deg", top: "35%", left: "15%" }} text="UI/UX" containerRef={grid2Container} />
@@ -214,7 +241,7 @@ const About = () => {
                     variants={itemVariants}
                     className="bg-gradient-to-t from-black to-zinc-900 border border-zinc-800 rounded-3xl relative overflow-hidden flex flex-col"
                 >
-                     <div className="p-6 w-full flex justify-between items-start z-20">
+                      <div className="p-6 w-full flex justify-between items-start z-20">
                         <div>
                             <p className="text-white font-bold text-lg">Global Uplink</p>
                             <p className="text-indigo-400 text-xs font-mono">LATENCY: 20ms</p>
@@ -223,14 +250,14 @@ const About = () => {
                             <p className="text-3xl font-mono text-white tracking-widest">{formattedTime}</p>
                             <p className="text-zinc-500 text-[10px] uppercase">Earth Standard Time</p>
                         </div>
-                     </div>
-                     
-                     <div className="flex-1 w-full h-full relative flex items-end justify-center pb-4">
+                      </div>
+                      
+                      <div className="flex-1 w-full h-full relative flex items-end justify-center pb-4">
                         <div className="scale-125 opacity-90 transition-opacity duration-300 hover:opacity-100">
                             <Globe />
                         </div>
                         <div className="absolute bottom-0 w-full h-24 bg-gradient-to-t from-black to-transparent pointer-events-none" />
-                     </div>
+                      </div>
                 </motion.div>
 
             </div>
