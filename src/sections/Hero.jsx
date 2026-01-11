@@ -1,6 +1,5 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import HeroText from "../components/HeroText";
-import ParallaxBackground from "../components/ParallaxBackground";
 import Astronaut from "../components/Astronaut";
 import { Float, OrbitControls } from "@react-three/drei";
 import { useMediaQuery } from "react-responsive";
@@ -9,6 +8,7 @@ import { Suspense, useRef } from "react";
 import Loader from "../components/Loader";
 import AnimatedButton from "../components/AnimatedButton";
 import SoundController from "../components/SoundController";
+import ParallaxBackground from "../components/ParallaxBackground";
 
 const Hero = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -30,9 +30,9 @@ const Hero = () => {
   return (
     <section className="flex items-start justify-center min-h-screen overflow-hidden md:items-start md:justify-start c-space" id="home">
       <HeroText />
+      <ParallaxBackground/>
       <SoundController />
-      <ParallaxBackground />
-      <figure
+          <figure
         className="absolute bottom-0 w-full h-[50vh] pointer-events-none flex z-10 md:bottom-auto md:top-0 md:right-0 md:h-full"
         style={{ width: "100vw", height: "100vh" }}
       >
