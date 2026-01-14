@@ -2,22 +2,23 @@
 
 import createGlobe from "cobe";
 import { useMotionValue, useSpring } from "motion/react";
-import { useEffect, useRef } from "react";
-
+import { useEffect, useRef, useState, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 
 const MOVEMENT_DAMPING = 1400;
 
-const GLOBE_CONFIG = {
+// OPTIMIZED DEFAULT CONFIG
+// Reduced samples from 16,000 -> 10,000 for better desktop performance
+const DEFAULT_CONFIG = {
   width: 800,
   height: 800,
   onRender: () => {},
-  devicePixelRatio: 2,
+  devicePixelRatio: 1.2, // Reduced from 2 -> 1.2 (Visual difference is negligible, performance gain is huge)
   phi: 0,
   theta: 0.3,
   dark: 1,
   diffuse: 0.4,
-  mapSamples: 16000,
+  mapSamples: 10000, // Lowered baseline for desktop
   mapBrightness: 1.2,
   baseColor: [1, 1, 1],
   markerColor: [1, 1, 1],
@@ -36,12 +37,14 @@ const GLOBE_CONFIG = {
   ],
 };
 
-export function Globe({ className, config = GLOBE_CONFIG }) {
+export function Globe({ className, config = DEFAULT_CONFIG }) {
   let phi = 0;
   let width = 0;
   const canvasRef = useRef(null);
+  const containerRef = useRef(null);
   const pointerInteracting = useRef(null);
   const pointerInteractionMovement = useRef(0);
+  const [isVisible, setIsVisible] = useState(false);
 
   const r = useMotionValue(0);
   const rs = useSpring(r, {
@@ -49,6 +52,8 @@ export function Globe({ className, config = GLOBE_CONFIG }) {
     damping: 30,
     stiffness: 100,
   });
+
+  const memoizedConfig = useMemo(() => config, [config]);
 
   const updatePointerInteraction = (value) => {
     pointerInteracting.current = value;
@@ -66,6 +71,32 @@ export function Globe({ className, config = GLOBE_CONFIG }) {
   };
 
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible || !canvasRef.current) return;
+
+    const isMobile = window.innerWidth < 640; 
+    
+    // Aggressive optimization for mobile, moderate for desktop
+    // Mobile: 6000 dots, Desktop (from config): 10000 dots
+    const optimizedSamples = isMobile ? 6000 : memoizedConfig.mapSamples;
+    
+    // Mobile: 1x res, Desktop (from config): 1.2x res
+    const optimizedDPR = isMobile ? 1 : memoizedConfig.devicePixelRatio;
+
     const onResize = () => {
       if (canvasRef.current) {
         width = canvasRef.current.offsetWidth;
@@ -76,10 +107,13 @@ export function Globe({ className, config = GLOBE_CONFIG }) {
     onResize();
 
     const globe = createGlobe(canvasRef.current, {
-      ...config,
+      ...memoizedConfig,
       width: width * 2,
       height: width * 2,
+      mapSamples: optimizedSamples,
+      devicePixelRatio: optimizedDPR,
       onRender: (state) => {
+        if (!isVisible) return; 
         if (!pointerInteracting.current) phi += 0.005;
         state.phi = phi + rs.get();
         state.width = width * 2;
@@ -87,15 +121,19 @@ export function Globe({ className, config = GLOBE_CONFIG }) {
       },
     });
 
-    setTimeout(() => (canvasRef.current.style.opacity = "1"), 0);
+    setTimeout(() => {
+        if(canvasRef.current) canvasRef.current.style.opacity = "1";
+    }, 0);
+
     return () => {
       globe.destroy();
       window.removeEventListener("resize", onResize);
     };
-  }, [rs, config]);
+  }, [rs, memoizedConfig, isVisible]);
 
   return (
     <div
+      ref={containerRef}
       className={twMerge(
         "mx-auto aspect-[1/1] w-full max-w-[600px]",
         className
@@ -103,7 +141,7 @@ export function Globe({ className, config = GLOBE_CONFIG }) {
     >
       <canvas
         className={twMerge(
-          "size-[30rem] opacity-0 transition-opacity duration-500 [contain:layout_paint_size]"
+          "size-full opacity-0 transition-opacity duration-500 [contain:layout_paint_size]"
         )}
         ref={canvasRef}
         onPointerDown={(e) => {
