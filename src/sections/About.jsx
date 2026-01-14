@@ -1,11 +1,23 @@
 import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Download, FileText } from "lucide-react"; // Import icons
+import { Download, FileText, Smartphone, Server, Globe as GlobeIcon, Code, Database, Cpu } from "lucide-react"; 
 import Card from "../components/Card";
 import { Globe } from "../components/globe";
 import CopyEmailButton from "../components/CopyEmailButton";
 import { Frameworks } from "../components/FrameWorks";
 import { Particles } from "../components/Particles";
+
+// --- CUSTOM HOOK FOR MOBILE DETECTION ---
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+  return isMobile;
+};
 
 // --- CSS STYLES ---
 const styles = `
@@ -18,6 +30,13 @@ const styles = `
     10% { opacity: 1; }
     90% { opacity: 1; }
     100% { top: 100%; opacity: 0; }
+  }
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .animate-marquee {
+    animation: marquee 20s linear infinite;
   }
   .crt-lines {
     background: linear-gradient(
@@ -34,6 +53,7 @@ const styles = `
 
 const About = () => {
   const grid2Container = useRef();
+  const isMobile = useIsMobile();
   
   // --- CLOCK LOGIC ---
   const [time, setTime] = useState(new Date());
@@ -66,22 +86,24 @@ const About = () => {
     }
   };
 
-  const viewportConfig = { once: false, amount: 0.3 };
+  const viewportConfig = { once: true, amount: 0.2 }; // Changed 'once' to true for better performance
 
   return (
     <section className="c-space section-spacing py-20 relative overflow-hidden" id="about">
       <style>{styles}</style>
-      <div className="absolute inset-0 z-0">
-                      <Particles
-                          className="absolute inset-0"
-                          quantity={400}
-                          ease={500}
-                          color="#22c55e" 
-                          shape="square"  
-                          vx={0.5}
-                          vy={-0.5} 
-                      />
-              </div>
+      
+      {/* 1. OPTIMIZATION: Reduced Particles on Mobile */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+          <Particles
+              className="absolute inset-0"
+              quantity={isMobile ? 40 : 400} // 10x fewer particles on mobile
+              ease={500}
+              color="#22c55e" 
+              shape="square"  
+              vx={0.5}
+              vy={-0.5} 
+          />
+      </div>
 
       {/* CRT Overlay */}
       <div className="absolute inset-0 crt-lines z-50 opacity-20 pointer-events-none mix-blend-overlay" />
@@ -147,10 +169,8 @@ const About = () => {
                     
                     {/* BUTTON CONTAINER */}
                     <div className="mt-auto w-full flex flex-col gap-3">
-                        
-                        {/* 1. Download CV Button (New) */}
                         <a 
-                            href="/assets/Sethmina_CV.pdf" // ⚠️ Ensure this file exists in public/assets/
+                            href="/assets/Sethmina_CV.pdf" 
                             download="Dilshan_Sethmina_CV.pdf"
                             className="group w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-lg transition-all duration-300 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40"
                         >
@@ -158,11 +178,7 @@ const About = () => {
                             <span className="font-medium text-sm">Download CV</span>
                             <Download className="w-4 h-4 opacity-70 group-hover:translate-y-1 transition-transform" />
                         </a>
-
-                        {/* Divider Line */}
                         <div className="w-full h-[1px] bg-white/10" />
-
-                        {/* 2. Copy Email Button */}
                         <div className="pt-1">
                              <CopyEmailButton />
                         </div>
@@ -192,7 +208,7 @@ const About = () => {
 
                 <div className="md:w-1/2 z-10 relative">
                     <h3 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
-                        <svg className="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                        <Cpu className="w-6 h-6 text-indigo-500" />
                         Tech Arsenal
                     </h3>
                     <p className="text-zinc-400 text-sm leading-relaxed mb-4">
@@ -201,49 +217,81 @@ const About = () => {
                         Building scalable architecture that survives the vacuum of space.
                     </p>
                 </div>
-                <div className="md:w-1/2 w-full flex justify-center items-center relative">
+                
+                {/* 2. OPTIMIZATION: Conditional Tech Stack Display */}
+                <div className="md:w-1/2 w-full flex justify-center items-center relative h-[200px] md:h-auto overflow-hidden">
                     <div className="absolute inset-0 bg-indigo-600/20 blur-[40px] rounded-full" />
-                    <div className="relative z-10 scale-90">
-                        <Frameworks />
-                    </div>
+                    
+                    {isMobile ? (
+                      /* LIGHTWEIGHT MOBILE MARQUEE (Zero CPU Cost) */
+                      <div className="relative w-full overflow-hidden whitespace-nowrap mask-linear-fade">
+                        <div className="flex gap-8 animate-marquee items-center text-zinc-500 font-bold text-2xl uppercase opacity-70">
+                           <span>Java</span><span>•</span><span>React</span><span>•</span><span>Next.js</span><span>•</span><span>MongoDB</span><span>•</span><span>Node</span><span>•</span><span>Tailwind</span><span>•</span>
+                           {/* Duplicate for seamless loop */}
+                           <span>Java</span><span>•</span><span>React</span><span>•</span><span>Next.js</span><span>•</span><span>MongoDB</span><span>•</span><span>Node</span><span>•</span><span>Tailwind</span><span>•</span>
+                        </div>
+                      </div>
+                    ) : (
+                      /* HEAVY DESKTOP 3D CLOUD */
+                      <div className="relative z-10 scale-90">
+                          <Frameworks />
+                      </div>
+                    )}
                 </div>
             </motion.div>
 
             {/* --- BLOCK 3 & 4: Interactive Modules --- */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[400px]">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-auto md:h-[400px]">
                 
-                {/* Logic Board (Animated) */}
+                {/* Logic Board */}
                 <motion.div 
                     initial="hidden"
                     whileInView="visible"
                     viewport={viewportConfig}
                     variants={itemVariants}
-                    className="bg-[#0a0a0a] border border-zinc-800 rounded-3xl relative overflow-hidden group"
+                    className="bg-[#0a0a0a] border border-zinc-800 rounded-3xl relative overflow-hidden group min-h-[300px]"
                 >
                       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:20px_20px]" />
                       <div className="absolute top-5 left-5 z-20 bg-black/60 backdrop-blur px-3 py-1 rounded border border-white/10">
-                        <p className="text-xs font-mono text-indigo-400">MODE: INTERACTIVE</p>
+                        <p className="text-xs font-mono text-indigo-400">MODE: {isMobile ? 'STATIC' : 'INTERACTIVE'}</p>
                       </div>
 
-                    <div ref={grid2Container} className="w-full h-full relative z-10 hover:cursor-grab active:cursor-grabbing">
-                        <Card style={{ rotate: "12deg", top: "35%", left: "15%" }} text="UI/UX" containerRef={grid2Container} />
-                        <Card style={{ rotate: "-15deg", bottom: "25%", right: "20%" }} text="SOLID" containerRef={grid2Container} />
-                        <Card style={{ rotate: "5deg", top: "15%", right: "10%" }} image="assets/logos/react.svg" containerRef={grid2Container} />
-                        <Card style={{ rotate: "-10deg", bottom: "30%", left: "10%" }} image="assets/logos/csharp-pink.png" containerRef={grid2Container} />
+                    <div ref={grid2Container} className="w-full h-full relative z-10">
+                      {/* 3. OPTIMIZATION: Static Grid for Mobile, Physics for Desktop */}
+                      {isMobile ? (
+                        <div className="w-full h-full flex flex-col justify-center items-center gap-4 p-8">
+                            <div className="bg-zinc-800/80 border border-white/10 px-6 py-3 rounded-full text-white font-bold shadow-lg flex items-center gap-2">
+                                <Code size={18} className="text-blue-400"/> UI/UX
+                            </div>
+                            <div className="bg-zinc-800/80 border border-white/10 px-6 py-3 rounded-full text-white font-bold shadow-lg flex items-center gap-2">
+                                <Server size={18} className="text-purple-400"/> SOLID
+                            </div>
+                            <div className="bg-zinc-800/80 border border-white/10 px-6 py-3 rounded-full text-white font-bold shadow-lg flex items-center gap-2">
+                                <Database size={18} className="text-green-400"/> React
+                            </div>
+                        </div>
+                      ) : (
+                        <div className="w-full h-full relative hover:cursor-grab active:cursor-grabbing">
+                           <Card style={{ rotate: "12deg", top: "35%", left: "15%" }} text="UI/UX" containerRef={grid2Container} />
+                           <Card style={{ rotate: "-15deg", bottom: "25%", right: "20%" }} text="SOLID" containerRef={grid2Container} />
+                           <Card style={{ rotate: "5deg", top: "15%", right: "10%" }} image="assets/logos/react.svg" containerRef={grid2Container} />
+                           <Card style={{ rotate: "-10deg", bottom: "30%", left: "10%" }} image="assets/logos/csharp-pink.png" containerRef={grid2Container} />
+                        </div>
+                      )}
                     </div>
                 </motion.div>
 
-                {/* Global Uplink (Animated) */}
+                {/* Global Uplink */}
                 <motion.div 
                     initial="hidden"
                     whileInView="visible"
                     viewport={viewportConfig}
                     variants={itemVariants}
-                    className="bg-gradient-to-t from-black to-zinc-900 border border-zinc-800 rounded-3xl relative overflow-hidden flex flex-col"
+                    className="bg-gradient-to-t from-black to-zinc-900 border border-zinc-800 rounded-3xl relative overflow-hidden flex flex-col min-h-[300px]"
                 >
                       <div className="p-6 w-full flex justify-between items-start z-20">
                         <div>
-                            <p className="text-white font-bold text-lg">Global Uplink</p>
+                            <p className="text-white font-bold text-lg flex items-center gap-2"><GlobeIcon size={18} /> Global Uplink</p>
                             <p className="text-indigo-400 text-xs font-mono">LATENCY: 20ms</p>
                         </div>
                         <div className="text-right">
@@ -254,6 +302,7 @@ const About = () => {
                       
                       <div className="flex-1 w-full h-full relative flex items-end justify-center pb-4">
                         <div className="scale-125 opacity-90 transition-opacity duration-300 hover:opacity-100">
+                             {/* The Globe component now handles its own internal optimization */}
                             <Globe />
                         </div>
                         <div className="absolute bottom-0 w-full h-24 bg-gradient-to-t from-black to-transparent pointer-events-none" />
