@@ -282,32 +282,7 @@ const About = () => {
                 </motion.div>
 
                 {/* Global Uplink */}
-                <motion.div 
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={viewportConfig}
-                    variants={itemVariants}
-                    className="bg-gradient-to-t from-black to-zinc-900 border border-zinc-800 rounded-3xl relative overflow-hidden flex flex-col min-h-[300px]"
-                >
-                      <div className="p-6 w-full flex justify-between items-start z-20">
-                        <div>
-                            <p className="text-white font-bold text-lg flex items-center gap-2"><GlobeIcon size={18} /> Global Uplink</p>
-                            <p className="text-indigo-400 text-xs font-mono">LATENCY: 20ms</p>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-3xl font-mono text-white tracking-widest">{formattedTime}</p>
-                            <p className="text-zinc-500 text-[10px] uppercase">Earth Standard Time</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex-1 w-full h-full relative flex items-end justify-center pb-4">
-                        <div className="scale-125 opacity-90 transition-opacity duration-300 hover:opacity-100">
-                             {/* The Globe component now handles its own internal optimization */}
-                            <Globe />
-                        </div>
-                        <div className="absolute bottom-0 w-full h-24 bg-gradient-to-t from-black to-transparent pointer-events-none" />
-                      </div>
-                </motion.div>
+               
 
             </div>
         </div>
