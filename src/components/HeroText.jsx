@@ -12,9 +12,8 @@ const HeroText = () => {
   };
 
   return (
-    <div className="absolute inset-0 z-10 flex flex-col top-50 left-40 pointer-events-none c-space">
+    <div className="absolute inset-0 z-10 flex flex-col md:top-50 md:left-40 pointer-events-none c-space">
       
-      {/* 1. INJECT SPACE FONT (Orbitron) */}
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap');
@@ -76,7 +75,8 @@ const HeroText = () => {
       </div>
 
       {/* ---------------- MOBILE VIEW (FIXED) ---------------- */}
-      <div className="flex flex-col md:hidden gap-6 font-space items-center text-center w-full">
+      {/* 1. Use 'block' instead of 'flex' to prevent flex-gap jitter */}
+      <div className="block md:hidden font-space text-center w-full mt-20">
         
         {/* Block 1: Static Greeting */}
         <motion.div
@@ -90,20 +90,20 @@ const HeroText = () => {
           <span className="text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]">SETHMINA</span>
         </motion.div>
 
-        {/* Block 2: Dynamic Flip Words (Isolated) */}
-        {/* Using a fixed height container that is separated from the text above */}
+        {/* Block 2: Dynamic Flip Words (Rigid Container) */}
+        {/* 2. RIGID BOX: Fixed height (h-24) + Overflow Hidden. This stops expansion. */}
         <motion.div 
-            className="relative h-[60px] w-full flex justify-center items-center mt-2"
+            className="relative w-full h-24 mt-6 overflow-hidden" 
             variants={variants}
             initial="hidden"
             animate="visible"
             transition={{ delay: 1.2 }}
         >
-             {/* Absolute centering ensures the box size never changes regardless of word length */}
+             {/* 3. ABSOLUTE CENTERING: Locks text to the center of the rigid box */}
              <div className="absolute inset-0 flex justify-center items-center">
                 <FlipWord2
                     words={who}
-                    className="font-black text-white text-4xl tracking-widest" // Reduced to 4xl to prevent screen overflow
+                    className="font-black text-white text-4xl tracking-widest"
                 />
              </div>
         </motion.div>

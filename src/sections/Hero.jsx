@@ -17,7 +17,7 @@ const Hero = () => {
   const heroGroupRef = useRef(); 
 
   const screenScale = isMobile ? 0.1 : 0.15;
-  const screenPosition = isMobile ? [0, -25, 0] : [20, -27, 3];
+  const screenPosition = isMobile ? [0, -20, 0] : [20, -27, 3];
   const rotation = [-1.3, -0.5, 0];
 
   const scrollToAbout = () => {
