@@ -1,37 +1,13 @@
+"use client";
+
 import { twMerge } from "tailwind-merge";
-import React, { useEffect, useRef, useState } from "react";
-
-function MousePosition() {
-  const [mousePosition, setMousePosition] = useState({
-    x: 0,
-    y: 0,
-  });
-
-  useEffect(() => {
-    const handleMouseMove = (event) => {
-      setMousePosition({ x: event.clientX, y: event.clientY });
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, []);
-
-  return mousePosition;
-}
+import React, { useEffect, useRef } from "react";
 
 function hexToRgb(hex) {
   hex = hex.replace("#", "");
-
   if (hex.length === 3) {
-    hex = hex
-      .split("")
-      .map((char) => char + char)
-      .join("");
+    hex = hex.split("").map((char) => char + char).join("");
   }
-
   const hexInt = parseInt(hex, 16);
   const red = (hexInt >> 16) & 255;
   const green = (hexInt >> 8) & 255;
@@ -56,12 +32,33 @@ export const Particles = ({
   const canvasContainerRef = useRef(null);
   const context = useRef(null);
   const circles = useRef([]);
-  const mousePosition = MousePosition();
   const mouse = useRef({ x: 0, y: 0 });
   const canvasSize = useRef({ w: 0, h: 0 });
   const dpr = typeof window !== "undefined" ? window.devicePixelRatio : 1;
   const rafID = useRef(null);
   const resizeTimeout = useRef(null);
+
+  // 1. OPTIMIZATION: Track mouse without triggering React re-renders
+  useEffect(() => {
+    const onMouseMove = (e) => {
+      if (canvasContainerRef.current) {
+        const rect = canvasContainerRef.current.getBoundingClientRect();
+        const { w, h } = canvasSize.current;
+        const x = e.clientX - rect.left - w / 2;
+        const y = e.clientY - rect.top - h / 2;
+        
+        // Only update if inside/near the canvas to save calculations
+        const inside = x < w / 2 && x > -w / 2 && y < h / 2 && y > -h / 2;
+        if (inside) {
+          mouse.current.x = x;
+          mouse.current.y = y;
+        }
+      }
+    };
+
+    window.addEventListener("mousemove", onMouseMove);
+    return () => window.removeEventListener("mousemove", onMouseMove);
+  }, []);
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -71,9 +68,7 @@ export const Particles = ({
     animate();
 
     const handleResize = () => {
-      if (resizeTimeout.current) {
-        clearTimeout(resizeTimeout.current);
-      }
+      if (resizeTimeout.current) clearTimeout(resizeTimeout.current);
       resizeTimeout.current = setTimeout(() => {
         initCanvas();
       }, 200);
@@ -82,41 +77,15 @@ export const Particles = ({
     window.addEventListener("resize", handleResize);
 
     return () => {
-      if (rafID.current != null) {
-        window.cancelAnimationFrame(rafID.current);
-      }
-      if (resizeTimeout.current) {
-        clearTimeout(resizeTimeout.current);
-      }
+      if (rafID.current != null) window.cancelAnimationFrame(rafID.current);
+      if (resizeTimeout.current) clearTimeout(resizeTimeout.current);
       window.removeEventListener("resize", handleResize);
     };
-  }, [color, shape]);
-
-  useEffect(() => {
-    onMouseMove();
-  }, [mousePosition.x, mousePosition.y]);
-
-  useEffect(() => {
-    initCanvas();
-  }, [refresh]);
+  }, [color, shape, refresh]);
 
   const initCanvas = () => {
     resizeCanvas();
     drawParticles();
-  };
-
-  const onMouseMove = () => {
-    if (canvasRef.current) {
-      const rect = canvasRef.current.getBoundingClientRect();
-      const { w, h } = canvasSize.current;
-      const x = mousePosition.x - rect.left - w / 2;
-      const y = mousePosition.y - rect.top - h / 2;
-      const inside = x < w / 2 && x > -w / 2 && y < h / 2 && y > -h / 2;
-      if (inside) {
-        mouse.current.x = x;
-        mouse.current.y = y;
-      }
-    }
   };
 
   const resizeCanvas = () => {
@@ -128,12 +97,17 @@ export const Particles = ({
       canvasRef.current.height = canvasSize.current.h * dpr;
       canvasRef.current.style.width = `${canvasSize.current.w}px`;
       canvasRef.current.style.height = `${canvasSize.current.h}px`;
+      
+      // 2. OPTIMIZATION: Set scale once, not every frame
       context.current.scale(dpr, dpr);
 
+      // 3. OPTIMIZATION: Reduce particles on mobile
+      const isMobile = window.innerWidth < 768;
+      const targetQuantity = isMobile ? Math.floor(quantity / 2) : quantity;
+
       circles.current = [];
-      for (let i = 0; i < quantity; i++) {
-        const circle = circleParams();
-        drawCircle(circle);
+      for (let i = 0; i < targetQuantity; i++) {
+        circles.current.push(circleParams());
       }
     }
   };
@@ -150,140 +124,108 @@ export const Particles = ({
     const dy = (Math.random() - 0.5) * 0.1;
     const magnetism = 0.1 + Math.random() * 4;
     return {
-      x,
-      y,
-      translateX,
-      translateY,
-      size: pSize,
-      alpha,
-      targetAlpha,
-      dx,
-      dy,
-      magnetism,
+      x, y, translateX, translateY, size: pSize, alpha, targetAlpha, dx, dy, magnetism,
     };
   };
 
   const rgb = hexToRgb(color);
 
-  const drawCircle = (circle, update = false) => {
+  const drawCircle = (circle) => {
     if (context.current) {
       const { x, y, translateX, translateY, size, alpha } = circle;
-      context.current.translate(translateX, translateY);
+      
+      // 4. OPTIMIZATION: Direct coordinate math instead of context.translate()
+      const drawX = x + translateX;
+      const drawY = y + translateY;
+
       context.current.beginPath();
       
       if (shape === "square") {
-        context.current.rect(x, y, size, size);
+        context.current.rect(drawX, drawY, size, size);
       } else {
-        context.current.arc(x, y, size, 0, 2 * Math.PI);
+        context.current.arc(drawX, drawY, size, 0, 2 * Math.PI);
       }
       
       context.current.fillStyle = `rgba(${rgb.join(", ")}, ${alpha})`;
       context.current.fill();
-      context.current.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      if (!update) {
-        circles.current.push(circle);
-      }
-    }
-  };
-
-  const clearContext = () => {
-    if (context.current) {
-      context.current.clearRect(
-        0,
-        0,
-        canvasSize.current.w,
-        canvasSize.current.h
-      );
     }
   };
 
   const drawParticles = () => {
-    clearContext();
-    const particleCount = quantity;
-    for (let i = 0; i < particleCount; i++) {
-      const circle = circleParams();
-      drawCircle(circle);
+    if (context.current) {
+      context.current.clearRect(0, 0, canvasSize.current.w, canvasSize.current.h);
+      circles.current.forEach(drawCircle);
     }
   };
 
   const remapValue = (value, start1, end1, start2, end2) => {
-    const remapped =
-      ((value - start1) * (end2 - start2)) / (end1 - start1) + start2;
+    const remapped = ((value - start1) * (end2 - start2)) / (end1 - start1) + start2;
     return remapped > 0 ? remapped : 0;
   };
 
   const animate = () => {
-    clearContext();
-    circles.current.forEach((circle, i) => {
-      // 1. Edge Detection & Alpha Logic
-      const edge = [
-        circle.x + circle.translateX - circle.size,
-        canvasSize.current.w - circle.x - circle.translateX - circle.size,
-        circle.y + circle.translateY - circle.size,
-        canvasSize.current.h - circle.y - circle.translateY - circle.size,
-      ];
-      const closestEdge = edge.reduce((a, b) => Math.min(a, b));
-      const remapClosestEdge = parseFloat(
-        remapValue(closestEdge, 0, 20, 0, 1).toFixed(2)
-      );
-      if (remapClosestEdge > 1) {
-        circle.alpha += 0.02;
-        if (circle.alpha > circle.targetAlpha) {
-          circle.alpha = circle.targetAlpha;
-        }
-      } else {
-        circle.alpha = circle.targetAlpha * remapClosestEdge;
-      }
-
-      // 2. Base Movement (Flow)
-      circle.x += circle.dx + vx;
-      circle.y += circle.dy + vy;
-
-      // 3. Mouse Interaction (Repulsion Logic)
-      // Convert Mouse to Top-Left Coords for comparison with circle.x/y
-      const mouseX = mouse.current.x + canvasSize.current.w / 2;
-      const mouseY = mouse.current.y + canvasSize.current.h / 2;
-
-      const dx = mouseX - (circle.x + circle.translateX);
-      const dy = mouseY - (circle.y + circle.translateY);
-      const distance = Math.sqrt(dx * dx + dy * dy);
+    if (context.current) {
+      context.current.clearRect(0, 0, canvasSize.current.w, canvasSize.current.h);
       
-      const interactionRadius = 120; // How close mouse needs to be to affect particle
+      circles.current.forEach((circle) => {
+        // Edge Detection
+        const edge = [
+          circle.x + circle.translateX - circle.size,
+          canvasSize.current.w - circle.x - circle.translateX - circle.size,
+          circle.y + circle.translateY - circle.size,
+          canvasSize.current.h - circle.y - circle.translateY - circle.size,
+        ];
+        const closestEdge = Math.min(...edge);
+        const remapClosestEdge = parseFloat(remapValue(closestEdge, 0, 20, 0, 1).toFixed(2));
 
-      if (distance < interactionRadius) {
-        const forceDirectionX = dx / distance;
-        const forceDirectionY = dy / distance;
-        
-        // The closer the mouse, the stronger the push
-        const force = (interactionRadius - distance) / interactionRadius; 
-        
-        // Push the particle away (Negative value pushes away, Positive pulls in)
-        const repulsionStrength = 5; 
-        circle.translateX -= forceDirectionX * force * repulsionStrength;
-        circle.translateY -= forceDirectionY * force * repulsionStrength;
-      }
+        if (remapClosestEdge > 1) {
+          circle.alpha += 0.02;
+          if (circle.alpha > circle.targetAlpha) circle.alpha = circle.targetAlpha;
+        } else {
+          circle.alpha = circle.targetAlpha * remapClosestEdge;
+        }
 
-      // 4. Spring Back to Original Position (Ease)
-      // This creates the "bouncy" return effect
-      circle.translateX -= circle.translateX * 0.05; // Friction/Return speed
-      circle.translateY -= circle.translateY * 0.05;
+        circle.x += circle.dx + vx;
+        circle.y += circle.dy + vy;
 
-      drawCircle(circle, true);
+        // Mouse Physics
+        const mouseX = mouse.current.x + canvasSize.current.w / 2;
+        const mouseY = mouse.current.y + canvasSize.current.h / 2;
+        const dx = mouseX - (circle.x + circle.translateX);
+        const dy = mouseY - (circle.y + circle.translateY);
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const interactionRadius = 120;
 
-      // 5. Bounds Check
-      if (
-        circle.x < -circle.size ||
-        circle.x > canvasSize.current.w + circle.size ||
-        circle.y < -circle.size ||
-        circle.y > canvasSize.current.h + circle.size
-      ) {
-        circles.current.splice(i, 1);
-        const newCircle = circleParams();
-        drawCircle(newCircle);
-      }
-    });
-    rafID.current = window.requestAnimationFrame(animate);
+        if (distance < interactionRadius) {
+            const forceDirectionX = dx / distance;
+            const forceDirectionY = dy / distance;
+            const force = (interactionRadius - distance) / interactionRadius;
+            const repulsionStrength = 5;
+            circle.translateX -= forceDirectionX * force * repulsionStrength;
+            circle.translateY -= forceDirectionY * force * repulsionStrength;
+        }
+
+        circle.translateX -= circle.translateX * 0.05;
+        circle.translateY -= circle.translateY * 0.05;
+
+        // 5. OPTIMIZATION: Object Recycling instead of Splice
+        if (
+          circle.x < -circle.size ||
+          circle.x > canvasSize.current.w + circle.size ||
+          circle.y < -circle.size ||
+          circle.y > canvasSize.current.h + circle.size
+        ) {
+          // Reset properties instead of creating new object
+          circle.x = Math.random() * canvasSize.current.w;
+          circle.y = Math.random() * canvasSize.current.h;
+          circle.alpha = 0;
+        }
+
+        drawCircle(circle);
+      });
+      
+      rafID.current = window.requestAnimationFrame(animate);
+    }
   };
 
   return (
