@@ -34,7 +34,7 @@ const Preloader = () => {
           }
           return old + 1; 
         });
-      }, 10);
+      }, 5);
       return () => clearInterval(timer);
     } else {
       // Real load on desktop
