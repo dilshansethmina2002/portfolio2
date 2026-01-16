@@ -38,7 +38,7 @@ const Preloader = () => {
   useEffect(() => {
     if (displayProgress === 100) {
       // Small buffer (500ms) before fading out so user sees "100%"
-      const timer = setTimeout(() => setShow(false), 500);
+      const timer = setTimeout(() => setShow(false), 200);
       return () => clearTimeout(timer);
     }
   }, [displayProgress]);
