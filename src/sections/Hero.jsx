@@ -9,11 +9,12 @@ import Loader from "../components/Loader";
 import AnimatedButton from "../components/AnimatedButton";
 import SoundController from "../components/SoundController";
 import ParallaxBackground from "../components/ParallaxBackground";
+// 1. Import motion from framer-motion
+import { motion } from "framer-motion";
 
 const Hero = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   
-  // 1. Create a reference for the group we want to move with the mouse
   const heroGroupRef = useRef(); 
 
   const screenScale = isMobile ? 0.1 : 0.15;
@@ -32,44 +33,76 @@ const Hero = () => {
       <HeroText />
       <ParallaxBackground/>
       <SoundController />
-          <figure
-        className="absolute bottom-0 w-full h-[50vh] pointer-events-none flex z-10 md:bottom-auto md:top-0 md:right-0 md:h-full"
-        style={{ width: "100vw", height: "100vh" }}
-      >
-        <Canvas
-          camera={{ position: [0, 0, 30] }} // Set a fixed initial camera position
-          gl={{ antialias: true }}
-          dpr={[1, 2]}
-          style={{ pointerEvents: "auto" }}
+      
+      {/* --- DESKTOP 3D VIEW --- */}
+      {!isMobile && (
+        <figure
+          className="absolute bottom-0 w-full h-[50vh] pointer-events-none flex z-10 md:bottom-auto md:top-0 md:right-0 md:h-full"
+          style={{ width: "100vw", height: "100vh" }}
         >
-          <ambientLight intensity={0.5} />
-          <directionalLight position={[0, 10, 10]} intensity={2} />
-          
-          <Suspense fallback={<Loader />}>
-            {/* 2. Wrap everything in a group referenced by heroGroupRef */}
-            <group ref={heroGroupRef}>
-              <Float speed={1} rotationIntensity={1} floatIntensity={1}>
-                <Astronaut 
-                  scale={screenScale} 
-                  position={screenPosition} 
-                  rotation={rotation} 
-                />
-              </Float>
-            </group>
+          <Canvas
+            camera={{ position: [0, 0, 30] }}
+            gl={{ antialias: true }}
+            dpr={[1, 2]}
+            style={{ pointerEvents: "auto" }}
+          >
+            <ambientLight intensity={0.5} />
+            <directionalLight position={[0, 10, 10]} intensity={2} />
+            
+            <Suspense fallback={<Loader />}>
+              <group ref={heroGroupRef}>
+                <Float speed={1} rotationIntensity={1} floatIntensity={1}>
+                  <Astronaut 
+                    scale={screenScale} 
+                    position={screenPosition} 
+                    rotation={rotation} 
+                  />
+                </Float>
+              </group>
 
-            {/* 3. Pass the group ref to the Rig, NOT the camera */}
-            <Rig objectRef={heroGroupRef} />
+              <Rig objectRef={heroGroupRef} />
 
-            <OrbitControls 
-              enableZoom={false}
-              enablePan={false}
-              enableRotate={true}
-              enabled={!isMobile} // This now works safely
-              makeDefault
+              <OrbitControls 
+                enableZoom={false}
+                enablePan={false}
+                enableRotate={true}
+                makeDefault
+              />
+            </Suspense>
+          </Canvas>
+        </figure>
+      )}
+
+      {/* --- MOBILE 2D FALLBACK --- */}
+      {isMobile && (
+        <div className="absolute top-[35%] w-full flex justify-center z-10 pointer-events-none">
+            {/* 2. Changed <img> to <motion.img> */}
+            <motion.img 
+              src="/assets/astronaut-2d.png" 
+              alt="Astronaut"
+              // 3. Define the fade-in states
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 3, ease: "easeOut" }} // Slow 3s fade
+              
+              className="w-[250px] h-auto object-contain animate-float"
+              style={{
+                filter: "drop-shadow(0 0 10px rgba(255,255,255,0.3))"
+              }}
             />
-          </Suspense>
-        </Canvas>
-      </figure>
+            
+            <style jsx>{`
+              @keyframes float {
+                0% { transform: translateY(0px) rotate(0deg); }
+                50% { transform: translateY(-20px) rotate(2deg); }
+                100% { transform: translateY(0px) rotate(0deg); }
+              }
+              .animate-float {
+                animation: float 6s ease-in-out infinite;
+              }
+            `}</style>
+        </div>
+      )}
 
       <div className="absolute bottom-10 w-full flex z-20"
         style={ isMobile ? { justifyContent: "center" } : { left:"40%"}}
@@ -81,13 +114,9 @@ const Hero = () => {
   );
 };
 
-// 4. Update Rig to move the OBJECT (group), not the CAMERA
 function Rig({ objectRef }) {
   useFrame((state, delta) => {
     if (!objectRef.current) return;
-
-    // This creates a subtle rotation/parallax effect on the model based on mouse position
-    // We adjust rotation x and y. You can also adjust position if you prefer.
     easing.damp3(
       objectRef.current.rotation, 
       [state.pointer.y / 5, -state.pointer.x / 5, 0], 

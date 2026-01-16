@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 
 const HeroText = () => {
   const words = ["Creative", "Modern", "Stylish", "Responsive", "Innovative"];
-  const who = ["Developer", "Designer", "Creator"];
+  const who = [" Developer", "Designer", " Creator"];
 
   const variants = {
     hidden: { opacity: 0, x: -50 },
@@ -76,7 +76,7 @@ const HeroText = () => {
 
       {/* ---------------- MOBILE VIEW (FIXED) ---------------- */}
       {/* 1. Use 'block' instead of 'flex' to prevent flex-gap jitter */}
-      <div className="block md:hidden font-space text-center w-full mt-20">
+      <div className="block md:hidden font-space text-center w-full mt-25">
         
         {/* Block 1: Static Greeting */}
         <motion.div
@@ -93,7 +93,7 @@ const HeroText = () => {
         {/* Block 2: Dynamic Flip Words (Rigid Container) */}
         {/* 2. RIGID BOX: Fixed height (h-24) + Overflow Hidden. This stops expansion. */}
         <motion.div 
-            className="relative w-full h-24 mt-6 overflow-hidden" 
+            className="relative w-full h-24 overflow-hidden" 
             variants={variants}
             initial="hidden"
             animate="visible"
@@ -103,7 +103,7 @@ const HeroText = () => {
              <div className="absolute inset-0 flex justify-center items-center">
                 <FlipWord2
                     words={who}
-                    className="font-black text-white text-4xl tracking-widest"
+                    className="font-black text-white text-5xl tracking-widest"
                 />
              </div>
         </motion.div>
