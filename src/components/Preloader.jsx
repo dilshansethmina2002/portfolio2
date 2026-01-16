@@ -3,42 +3,58 @@ import { useProgress } from "@react-three/drei";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMediaQuery } from "react-responsive";
 
+// A list of "techy" loading states to cycle through
+const loadingStates = [
+  "Initializing System...",
+  "Loading Modules...",
+  "Optimizing Assets...",
+  "Compiling Shaders...",
+  "Mounting React Components...",
+  "Establishing Uplink...",
+  "Launch Ready."
+];
+
 const Preloader = () => {
   const { progress } = useProgress();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   
-  // We use a local state to manage the display percentage
   const [displayProgress, setDisplayProgress] = useState(0);
   const [show, setShow] = useState(true);
+  const [currentState, setCurrentState] = useState(0);
 
+  // --- PROGRESS LOGIC (Simulated vs Real) ---
   useEffect(() => {
     if (isMobile) {
-      // --- MOBILE LOGIC: Simulated Smooth Load ---
-      // This runs a fake progress bar from 0 to 100 over ~2 seconds
-      // It gives the 2D image time to load and shows off your branding
+      // Simulate load on mobile (approx 2.5 seconds)
       const timer = setInterval(() => {
         setDisplayProgress((old) => {
           if (old >= 100) {
             clearInterval(timer);
             return 100;
           }
-          return old + 1; // Increment by 1% every 20ms
+          return old + 1; 
         });
-      }, 20);
-
+      }, 10);
       return () => clearInterval(timer);
     } else {
-      // --- DESKTOP LOGIC: Real 3D Asset Tracking ---
-      // We round the progress to avoid decimals
+      // Real load on desktop
       setDisplayProgress(Math.round(progress));
     }
   }, [progress, isMobile]);
 
-  // When our local displayProgress hits 100, trigger the exit
+  // --- TEXT CYCLING LOGIC ---
+  // Change the text based on the percentage loaded
+  useEffect(() => {
+    const totalStates = loadingStates.length;
+    // Map 0-100% to the index of our loadingStates array
+    const index = Math.floor((displayProgress / 100) * (totalStates - 1));
+    setCurrentState(index);
+  }, [displayProgress]);
+
+  // --- EXIT LOGIC ---
   useEffect(() => {
     if (displayProgress === 100) {
-      // Small buffer (500ms) before fading out so user sees "100%"
-      const timer = setTimeout(() => setShow(false), 200);
+      const timer = setTimeout(() => setShow(false), 800); // Slight delay to see "Launch Ready"
       return () => clearTimeout(timer);
     }
   }, [displayProgress]);
@@ -48,34 +64,54 @@ const Preloader = () => {
       {show && (
         <motion.div
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 1, ease: "easeInOut" } }}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black"
+          exit={{ 
+            opacity: 0,
+            y: -50, // Slide up like a terminal window closing
+            transition: { duration: 0.8, ease: "easeInOut" } 
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black font-mono text-green-500"
         >
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center"
-          >
-            {/* Branding / Greeting */}
-            <h2 className="text-xl md:text-3xl font-bold text-white font-generalsans uppercase tracking-widest">
-              Initializing Space
-            </h2>
-            
-            {/* Progress Bar */}
-            <div className="w-64 h-1 bg-gray-800 rounded-full mt-4 overflow-hidden relative">
-              <motion.div
-                className="h-full bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.5)]"
-                initial={{ width: 0 }}
-                animate={{ width: `${displayProgress}%` }}
-              />
+          {/* Optional: CRT Scanline Effect Overlay */}
+          <div className="absolute inset-0 pointer-events-none opacity-10 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))]" style={{ backgroundSize: "100% 2px, 3px 100%" }} />
+
+          <div className="w-full max-w-md px-6 relative z-10">
+            {/* Header */}
+            <div className="flex justify-between items-end mb-2 border-b border-green-500/30 pb-2">
+               <span className="text-xs uppercase tracking-widest text-green-400/70">System Boot</span>
+               <span className="text-xs uppercase text-green-400/70">v.1.0.4</span>
             </div>
 
-            {/* Percentage Text */}
-            <p className="mt-2 text-sm text-gray-400 font-mono">
-              {displayProgress}% Loaded
-            </p>
-          </motion.div>
+            {/* Main Percentage - Big & Glitchy */}
+            <div className="text-6xl md:text-8xl font-bold tabular-nums mb-4 tracking-tighter text-white mix-blend-difference">
+               {displayProgress.toString().padStart(3, "0")}%
+            </div>
+
+            {/* Progress Bar - Segmented Style */}
+            <div className="w-full h-2 bg-gray-900 mb-4 overflow-hidden flex gap-1">
+               {/* Create a 'segmented' look by using a dashed border or multiple divs, 
+                   but a simple masked width works best for performance */}
+               <motion.div 
+                 className="h-full bg-green-500"
+                 initial={{ width: 0 }}
+                 animate={{ width: `${displayProgress}%` }}
+               />
+            </div>
+
+            {/* Dynamic Status Text */}
+            <div className="h-8 flex items-center">
+               <span className="mr-2 text-green-500">{">"}</span>
+               <motion.span 
+                 key={currentState} // Animate when text changes
+                 initial={{ opacity: 0, x: -10 }}
+                 animate={{ opacity: 1, x: 0 }}
+                 className="uppercase tracking-widest text-sm md:text-base text-green-100"
+               >
+                 {loadingStates[currentState]}
+                 <span className="animate-pulse">_</span> {/* Blinking Cursor */}
+               </motion.span>
+            </div>
+            
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
