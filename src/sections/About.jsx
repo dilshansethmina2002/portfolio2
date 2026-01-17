@@ -281,8 +281,10 @@ const About = () => {
                     </div>
                 </motion.div>
 
+
                 {/* Global Uplink */}
-                <motion.div 
+                {!isMobile && (
+                  <motion.div 
                     initial="hidden"
                     whileInView="visible"
                     viewport={viewportConfig}
@@ -308,6 +310,8 @@ const About = () => {
                         <div className="absolute bottom-0 w-full h-24 bg-gradient-to-t from-black to-transparent pointer-events-none" />
                       </div>
                 </motion.div>
+                )}
+                
 
             </div>
         </div>
