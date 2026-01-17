@@ -141,8 +141,13 @@ const About = () => {
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f46e51a_1px,transparent_1px),linear-gradient(to_bottom,#4f46e51a_1px,transparent_1px)] bg-[size:30px_30px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)]" />
 
                 {/* Floating Image */}
-                <div className="relative w-[80%] aspect-[4/4] mb-6 mt-4 animate-[float_6s_ease-in-out_infinite]">
-                    <div className="absolute w-full h-[2px] bg-indigo-400 shadow-[0_0_10px_#818cf8] z-20 animate-[scan_3s_ease-in-out_infinite]" />
+                <div className={`relative w-[80%] aspect-[4/4] mb-6 mt-4 ${!isMobile ? "animate-[float_6s_ease-in-out_infinite]" : ""}`}>
+                    
+                    {/* Only render scan line on Desktop */}
+                    {!isMobile && (
+                        <div className="absolute w-full h-[2px] bg-indigo-400 shadow-[0_0_10px_#818cf8] z-20 animate-[scan_3s_ease-in-out_infinite]" />
+                    )}
+
                     <div className="relative w-full h-full rounded-2xl overflow-hidden border-2 border-indigo-500/20 group-hover:border-indigo-400 transition-colors">
                         <img
                             src="assets/dilshan2.png"
