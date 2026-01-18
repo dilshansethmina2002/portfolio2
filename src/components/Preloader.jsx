@@ -24,23 +24,10 @@ const Preloader = () => {
 
   // --- PROGRESS LOGIC (Simulated vs Real) ---
   useEffect(() => {
-    if (isMobile) {
-      // Simulate load on mobile (approx 2.5 seconds)
-      const timer = setInterval(() => {
-        setDisplayProgress((old) => {
-          if (old >= 100) {
-            clearInterval(timer);
-            return 100;
-          }
-          return old + 1; 
-        });
-      }, 5);
-      return () => clearInterval(timer);
-    } else {
-      // Real load on desktop
+      // Always use real progress, regardless of device.
+      // This ensures the loader vanishes as soon as the assets are ready.
       setDisplayProgress(Math.round(progress));
-    }
-  }, [progress, isMobile]);
+    }, [progress]);
 
   // --- TEXT CYCLING LOGIC ---
   // Change the text based on the percentage loaded
